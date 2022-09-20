@@ -250,6 +250,8 @@ class Logica_mock():
                 automovil = self.dar_auto(id_auto)
                 auto_id = str(automovil['id'])
             accion = Accion(kilometraje, valor, self.utilitario.formatear_fecha(fecha), mantenimiento_id, auto_id)
+            print('*** Accion de mantenimiento a crear ***')
+            print(str(kilometraje) + ", " + str(valor) + ", " + str(self.utilitario.formatear_fecha(fecha)) + ", " + str(mantenimiento_id) + ", " + str(auto_id))
             session.add(accion)
             session.commit()
             registroExitoso = True

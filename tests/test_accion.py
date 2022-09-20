@@ -66,7 +66,7 @@ class AccionTestCase(unittest.TestCase):
         
     def test_reporte_ganancias_automovil(self):
         """Prueba para validar que no existan mantenimientos asociados a un automovil"""
-        #self.logica.eliminar_autos()
+        # self.logica.eliminar_autos()
         self.logica.crear_auto(
             "",
             self.data_factory.name().upper()[0:3] + str(random.randint(100, 999)),
@@ -86,21 +86,21 @@ class AccionTestCase(unittest.TestCase):
             self.data_factory.tipos_combustibles(),
         )
 
-        #self.logica.eliminar_mantenimientos()
+        # self.logica.eliminar_mantenimientos()
         self.logica.aniadir_mantenimiento(
-            self.data_factory.tipos_mantenimientos(), self.data_factory.sentence())
+            self.data_factory.tipos_mantenimientos() + str(random.randint(100, 10000)), self.data_factory.sentence())
         self.logica.aniadir_mantenimiento(
-            self.data_factory.tipos_mantenimientos(), self.data_factory.sentence())
+            self.data_factory.tipos_mantenimientos() + str(random.randint(100, 10000)), self.data_factory.sentence())
         self.logica.aniadir_mantenimiento(
-            self.data_factory.tipos_mantenimientos(), self.data_factory.sentence())
-        #self.logica.eliminar_acciones()
-        self.logica.crear_accion(random.randint(100, 10000), 1, float(random.uniform(10000, 300000)), float(random.uniform(10000, 300000)),
+            self.data_factory.tipos_mantenimientos() + str(random.randint(100, 10000)), self.data_factory.sentence())
+        self.logica.eliminar_acciones()
+        self.logica.crear_accion(1, 1, float(random.uniform(10000, 300000)), float(random.uniform(10000, 300000)),
                                                 self.data_factory.date_between(start_date='-4y'))
-        self.logica.crear_accion(random.randint(100, 10000), 1, float(random.uniform(10000, 300000)), float(random.uniform(10000, 300000)),
+        self.logica.crear_accion(1, 1, float(random.uniform(10000, 300000)), float(random.uniform(10000, 300000)),
                                                 self.data_factory.date_between(start_date='-4y'))
-        self.logica.crear_accion(random.randint(100, 10000), 1, float(random.uniform(10000, 300000)), float(random.uniform(10000, 300000)),
+        self.logica.crear_accion(1, 1, float(random.uniform(10000, 300000)), float(random.uniform(10000, 300000)),
                                                 self.data_factory.date_between(start_date='-4y'))
-        self.logica.crear_accion(random.randint(100, 10000), 1, float(random.uniform(10000, 300000)), float(random.uniform(10000, 300000)),
+        self.logica.crear_accion(1, 1, float(random.uniform(10000, 300000)), float(random.uniform(10000, 300000)),
                                                 self.data_factory.date_between(start_date='-4y'))
         lista_gastos, valor_kilometro = self.logica.dar_reporte_ganancias(1)
 
