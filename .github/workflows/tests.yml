@@ -6,7 +6,7 @@ name: Pruebas unitarias
 jobs:
   job1:
     name: Pruebas
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
       - name: Checkout de repositorio
         uses: actions/checkout@v2
