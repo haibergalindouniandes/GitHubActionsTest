@@ -16,7 +16,3 @@ class Constantes(object):
 
     # Consulta que permite obtener EL KILOMETRAJE INICIAL Y FINAL DEL del ultimo mantenimiento realizad en el ultimo año
     CONSULTA_AGRUPADA_KM_AUTOMOVIL_ANIO = "SELECT  (SELECT a.kilometraje  AS inicial  from accion a where a.automovil_id = {id_auto} and a.mantenimiento_id = {id_accion}  order by a.fecha ASC LIMIT 1) AS KM_INICIAL , (SELECT a.kilometraje  AS final  from accion a where a.automovil_id = {id_auto} and a.mantenimiento_id = {id_accion} order by a.fecha DESC  LIMIT 1) AS KM_FINAL FROM accion a WHERE a.automovil_id = {id_auto} and a.mantenimiento_id  = {id_accion} and strftime('%Y', a.fecha) = (SELECT strftime('%Y', a.fecha) AS FECHA  from accion a where a.automovil_id = {id_auto} order by a.fecha DESC LIMIT 1) limit 1"
-
-
-def __setattr__(self, *_):
-    raise Exception("Tried to change the value of a constant")

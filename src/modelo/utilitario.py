@@ -15,11 +15,12 @@ class Utilitario():
 
     def validar_numero_flotante(self, numero):
         """Método que permite validar si un valor es flotante"""
+        esFlotante = False
         try:
             float(numero)
-            return True
-        except ValueError:
-            return False
+            esFlotante = True
+        finally:
+            return esFlotante
 
     def validar_cadena_vacia(self, cadena):
         """Método que permite validar si una cadena esta vacia"""
@@ -30,12 +31,12 @@ class Utilitario():
 
     def validar_cadena_fecha(self, cadena):
         """Método que permite validar si una cadena es fecha (YYYY-MM-DD)"""
-        esFecha = True
+        esFecha = False
         try:
             datetime.datetime.strptime(cadena, '%Y-%m-%d')
-        except ValueError:
-            esFecha = False
-        return esFecha        
+            esFecha = True
+        finally:
+            return esFecha        
     
     def formatear_fecha(self, fecha):
         """Método que permite formatear string a Date"""
