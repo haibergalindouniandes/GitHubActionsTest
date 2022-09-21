@@ -28,9 +28,6 @@ class Logica_mock():
                     {'Marca':'Renault', 'Placa':'BSQ782', 'Modelo': '2015', 'Kilometraje': 182000.0, \
                         'Color':'Plateado', 'Cilindraje': '1600', 'TipoCombustible':'Gasolina', 'Vendido': True, \
                         'ValorVenta': 18000000, 'KilometrajeVenta':195000 }]
-        self.mantenimientos = [{'Nombre':'Seguros', 'Descripcion': 'Compra de seguros para automóviles'}, \
-                               {'Nombre':"Impuestos", 'Descripcion': 'Impuestos que se deben pagar'}, \
-                               {'Nombre':"Gasolina", 'Descripcion': 'Abastecimiento de combustible'}]
         self.acciones = [{'Mantenimiento':'Seguros', 'Auto':'Volkswagen', 'Kilometraje':151000.0, 'Valor':120000.0, 'Fecha':'2022-01-01'},\
                         {'Mantenimiento':'Impuestos', 'Auto':'Volkswagen', 'Kilometraje':152000.0, 'Valor':600000.0, 'Fecha':'2022-02-01'},\
                         {'Mantenimiento':'Gasolina', 'Auto':'Volkswagen', 'Kilometraje':150600.0, 'Valor':120000.0, 'Fecha':'2022-01-05'},\
@@ -171,23 +168,28 @@ class Logica_mock():
           validacion = True
         return validacion
 
+    # Funcionalidades de mantenimiento
     def dar_mantenimientos(self):
-        lista_mantos = []
-        mantenimientos = session.query(Mantenimiento).order_by(Mantenimiento.nombre.asc()).all()
-        for manto in mantenimientos:
-            lista_mantos.append(self.utilitario.objeto_a_diccionario(manto))
-        session.close()
-        return lista_mantos
-
-    def dar_mantenimiento(self, mantenimiento):
         try:
-            if self.utilitario.validar_numero_entero(mantenimiento):
-                mantenimiento = session.query(Mantenimiento).filter(Mantenimiento.id == mantenimiento).one()
-            else:
-                mantenimiento = session.query(Mantenimiento).filter(Mantenimiento.nombre == mantenimiento).one()
+            lista_mantos = []
+            mantenimientos = session.query(Mantenimiento).order_by(Mantenimiento.nombre.asc()).all()
+            for mantenimiento in mantenimientos:
+                lista_mantos.append(self.utilitario.objeto_a_diccionario(mantenimiento))
         finally:
             session.close()
-            return mantenimiento  
+            return lista_mantos
+
+    def dar_mantenimiento(self, mantenimiento_id):
+        mantenimiento = None
+        try:
+            if self.utilitario.validar_numero_entero(mantenimiento_id):
+                mantenimientoBuscado = session.query(Mantenimiento).filter(Mantenimiento.id == mantenimiento_id).one()
+            else:
+                mantenimientoBuscado = session.query(Mantenimiento).filter(Mantenimiento.nombre == mantenimiento_id).one()
+            mantenimiento = self.utilitario.objeto_a_diccionario(mantenimientoBuscado)
+        finally:
+            session.close()
+            return mantenimiento
 
     def aniadir_mantenimiento(self, nombre, descripcion):
         resultado = False
@@ -203,9 +205,19 @@ class Logica_mock():
                 resultado = True
         return resultado	
     
-    def editar_mantenimiento(self, id, nombre, descripcion):
-        self.mantenimientos[id]['Nombre'] = nombre
-        self.mantenimientos[id]['Descripcion'] = descripcion
+    def editar_mantenimiento(self, nombre, descripcion):
+        resultado = False
+        if self.validar_crear_editar_mantenimiento(nombre, descripcion):
+            mantenimientoBuscado = self.dar_mantenimiento(nombre)
+            if mantenimientoBuscado != None:
+                mantenimientoActualizar = session.query(Mantenimiento).filter(Mantenimiento.id == mantenimientoBuscado['Id']).one()     
+                mantenimientoActualizar.nombre = nombre
+                mantenimientoActualizar.descripcion = descripcion
+                session.commit()
+                session.close()
+        else:
+            resultado = False
+        return resultado 
     
     def eliminar_mantenimiento(self, id):
         del self.mantenimientos[id]
@@ -220,7 +232,8 @@ class Logica_mock():
         if len(str(nombre)) > 5 and len(str(descripcion)) > 5 and nombre.isupper():
             validacion = True
         return validacion
-        
+
+    # Funcionalidades de accion        
     def dar_acciones_auto(self, id_auto):
         lista_acciones = []
         automovil = self.dar_auto(id_auto)
@@ -243,29 +256,36 @@ class Logica_mock():
                 mantenimiento_id = id_mantenimiento
             else:
                 mantenimiento = self.dar_mantenimiento(id_mantenimiento)
-                mantenimiento_id = mantenimiento.id
+                mantenimiento_id = mantenimiento['Id']
             if self.utilitario.validar_numero_entero(id_auto):
                 auto_id = id_auto
             else:
                 automovil = self.dar_auto(id_auto)
                 auto_id = str(automovil['id'])
             accion = Accion(round(kilometraje, 2), round(valor, 2), self.utilitario.formatear_fecha(fecha), mantenimiento_id, auto_id)
-            print('*** Accion de mantenimiento a crear ***')
-            print(self.utilitario.objeto_a_diccionario(accion))
             session.add(accion)
             session.commit()
             registroExitoso = True
         finally:
             session.close()
             return registroExitoso
-            
         
     def editar_accion(self, id_accion, mantenimiento, id_auto, valor, kilometraje, fecha):
-        self.acciones[id_accion]['Mantenimiento'] = mantenimiento
-        self.acciones[id_accion]['Auto'] = self.autos[id_auto]['Marca']
-        self.acciones[id_accion]['Valor'] = valor
-        self.acciones[id_accion]['Kilometraje'] = kilometraje
-        self.acciones[id_accion]['Fecha'] = fecha
+        resultado = False
+        accionBuscada = self.dar_accion(id_auto, id_accion)
+        try:
+            if not(isinstance(accionBuscada, str)):
+                mantenimiento = self.dar_mantenimiento(mantenimiento)
+                accionActualizar = session.query(Accion).filter(Accion.id == accionBuscada['Id']).one()     
+                accionActualizar.valor = valor
+                accionActualizar.kilometraje = kilometraje
+                accionActualizar.fecha = self.utilitario.formatear_fecha(fecha)
+                accionActualizar.mantenimiento_id = mantenimiento['Id']
+                session.commit()
+                resultado = True
+        finally:
+            session.close()
+            return resultado 
 
     def eliminar_accion(self, id_auto, id_accion):
         marca_auto =self.autos[id_auto]['Marca']

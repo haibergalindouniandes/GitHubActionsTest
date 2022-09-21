@@ -49,3 +49,25 @@ class MantenimientoTestCase(unittest.TestCase):
         # self.logica.eliminar_mantenimientos()
         seCreoMantenimiento = self.logica.aniadir_mantenimiento(self.data_factory.tipos_mantenimientos().lower(), self.data_factory.sentence())
         self.assertFalse(seCreoMantenimiento)		
+    
+    def test_editar_mantenimiento_parametros_vacios(self):
+        """Prueba para validar que no se actualice un mantenimiento por parametros vacios"""
+        seEditoMantenimiento = self.logica.editar_mantenimiento(self.data_factory.tipos_mantenimientos() + str(random.randint(1, 10000)), "")
+        self.assertFalse(seEditoMantenimiento, 'No se actualiza el mantenimiento por parametros vacios')
+
+    def test_editar_mantenimiento(self):
+        """Prueba para validar que se actualice un mantenimiento"""
+        # self.logica.eliminar_mantenimientos()
+        seEditoMantenimiento = self.logica.editar_mantenimiento(self.data_factory.tipos_mantenimientos() + str(random.randint(1, 10000)), self.data_factory.sentence())
+        self.assertFalse(seEditoMantenimiento, 'Se actualiza mantenimiento')		
+        
+    def test_consultar_lista_vacia_mantenimientos(self):
+        """Prueba que retorna una lista vacia de mantenimientos"""
+        self.logica.eliminar_mantenimientos()
+        self.assertEqual(self.logica.dar_mantenimientos(), [], 'Consultar lista vacia de mantenimientos')	
+
+    def test_consultar_mantenimientos(self):
+        """Prueba consultar los mantenimientos que se encuentran registrados"""
+        for item in range(1, 5):
+            self.logica.aniadir_mantenimiento(self.data_factory.tipos_mantenimientos() + str(random.randint(1, 10000)), self.data_factory.sentence())
+        self.assertGreater(self.logica.dar_mantenimientos(), [], 'Consultar los mantenimientos registrados')

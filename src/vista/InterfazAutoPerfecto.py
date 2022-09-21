@@ -68,7 +68,7 @@ class App_AutoPerfecto(QApplication):
         Esta función edita la información de un mantenimiento
         """
         if self.logica.validar_crear_editar_mantenimiento(nombre, descripcion):
-            self.logica.editar_mantenimiento(id, nombre, descripcion)
+            self.logica.editar_mantenimiento(nombre, descripcion)
         else:
             self.vista_lista_mantenimientos.error_mantenimiento()
         self.vista_lista_mantenimientos.mostrar_mantenimientos(self.logica.dar_mantenimientos())
@@ -116,9 +116,9 @@ class App_AutoPerfecto(QApplication):
         """
         Esta función crea una nueva acción asociada a un auto
         """
-        if self.logica.validar_crear_editar_accion(id, mantenimiento, self.auto_actual, valor, kilometraje, fecha):
+        if self.logica.validar_crear_editar_accion(mantenimiento, self.auto_actual, valor, kilometraje, fecha):
             self.logica.editar_accion(id, mantenimiento, self.auto_actual, valor, kilometraje, fecha)
-            nombre_auto = self.logica.dar_auto(self.auto_actual)['Marca']
+            nombre_auto = self.logica.dar_auto(self.auto_actual)['placa']
             self.vista_lista_acciones.mostrar_acciones(nombre_auto, self.logica.dar_acciones_auto(self.auto_actual))
         else:
             self.vista_lista_acciones.error_crear_editar_accion()

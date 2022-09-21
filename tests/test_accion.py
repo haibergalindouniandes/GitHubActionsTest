@@ -30,44 +30,98 @@ class AccionTestCase(unittest.TestCase):
         # Agregar provedor de vehiculos
         self.data_factory.add_provider(VehicleProvider)
 
-    def test_agregar_accion_parametros_vacios(self):
-        """Prueba para validar que no se envien parametros vacios"""
-        seCreaAccion = self.logica.crear_accion(2, 1, "", float(random.uniform(
-            10000, 300000)), self.data_factory.date_between(start_date='-12y'))
-        self.assertFalse(seCreaAccion, 'Se valida que los parametros de entrada no esten vacios')
+    # def test_agregar_accion_parametros_vacios(self):
+    #     """Prueba para validar que no se envien parametros vacios"""
+    #     seCreaAccion = self.logica.crear_accion(2, 1, "", float(random.uniform(
+    #         10000, 300000)), self.data_factory.date_between(start_date='-12y'))
+    #     self.assertFalse(seCreaAccion, 'Se valida que los parametros de entrada no esten vacios')
 
-    def test_agregar_accion(self):
-        """Prueba para agregar una accion"""
-        # self.logica.eliminar_mantenimientos()
-        self.logica.aniadir_mantenimiento(
-            self.data_factory.tipos_mantenimientos() + str(random.randint(1, 10000)), self.data_factory.sentence())
-        # self.logica.eliminar_autos()
-        self.logica.crear_auto(self.data_factory.vehicle_make_model(), self.data_factory.name().upper()[0:3] + str(random.randint(100, 999)),
-                               self.data_factory.vehicle_year(), self.data_factory.random_number(
-                                   digits=4), self.data_factory.color_name(),
-                               self.data_factory.random_number(digits=4), self.data_factory.tipos_combustibles())
-        seCreaAccion = self.logica.crear_accion(1, 1, float(random.uniform(10000, 300000)), float(random.uniform(10000, 300000)),
-                                                self.data_factory.date_between(start_date='-4y'))
-        self.assertTrue(seCreaAccion, 'Se agrega Accion')
+    # def test_agregar_accion(self):
+    #     """Prueba para agregar una accion"""
+    #     placaNuevoAuto = self.data_factory.name().upper()[0:3] + str(random.randint(100, 999))
+    #     nombreManimiento = self.data_factory.tipos_mantenimientos() + str(random.randint(1, 10000))
+    #     self.logica.aniadir_mantenimiento(nombreManimiento, self.data_factory.sentence()) 
+    #     self.logica.crear_auto(
+    #         self.data_factory.vehicle_make_model(),
+    #         placaNuevoAuto,
+    #         self.data_factory.vehicle_year(),
+    #         self.data_factory.random_number(digits=3),
+    #         self.data_factory.color_name(),
+    #         self.data_factory.random_number(digits=4),
+    #         self.data_factory.tipos_combustibles(),
+    #     )
+    #     seCreaAccion = self.logica.crear_accion(nombreManimiento, placaNuevoAuto, float(random.uniform(10000, 300000)), float(random.uniform(10000, 300000)),
+    #                                             self.data_factory.date_between(start_date='-4y'))
+    #     self.assertTrue(seCreaAccion, 'Se reagistra la nueva Accion')
 
-    def test_agregar_accion_mantenimiento_automovil_invalido(self):
-        """Prueba para validar que no se agregue una accion con un mantenimiento no existente"""
-        seCreaAccion = self.logica.crear_accion(random.randint(100, 10000), 1, float(random.uniform(10000, 300000)), float(random.uniform(10000, 300000)),
-                                                self.data_factory.date_between(start_date='-4y'))
-        self.assertFalse(seCreaAccion, 'Validacion agregar Accion mantenimiento no existe')
+    # def test_agregar_accion_mantenimiento_automovil_invalido(self):
+    #     """Prueba para validar que no se agregue una accion con un mantenimiento no existente"""
+    #     seCreaAccion = self.logica.crear_accion(random.randint(100, 10000), 1, float(random.uniform(10000, 300000)), float(random.uniform(10000, 300000)),
+    #                                             self.data_factory.date_between(start_date='-4y'))
+    #     self.assertFalse(seCreaAccion, 'Validacion agregar Accion mantenimiento no existe')
 
-    def test_listar_acciones(self):
-        """Prueba para listar las acciones asociadas a un automovil"""
-        for item in range(1, 10):
-            self.logica.crear_accion(1, 1, float(random.uniform(10000, 300000)), float(random.uniform(10000, 300000)),
-                                     self.data_factory.date_between(start_date='-4y'))
-        acciones = self.logica.dar_acciones_auto(1)
-        self.assertGreater(len(acciones), len([]), 'Consulta lista de acciones asociadas a un Automovil')                                   
+    # def test_listar_acciones(self):
+    #     """Prueba para listar las acciones asociadas a un automovil"""
+    #     placaNuevoAuto = self.data_factory.name().upper()[0:3] + str(random.randint(100, 999))
+    #     nombreManimiento = self.data_factory.tipos_mantenimientos() + str(random.randint(1, 10000))
+    #     self.logica.aniadir_mantenimiento(nombreManimiento, self.data_factory.sentence()) 
+    #     self.logica.crear_auto(
+    #         self.data_factory.vehicle_make_model(),
+    #         placaNuevoAuto,
+    #         self.data_factory.vehicle_year(),
+    #         self.data_factory.random_number(digits=3),
+    #         self.data_factory.color_name(),
+    #         self.data_factory.random_number(digits=4),
+    #         self.data_factory.tipos_combustibles(),
+    #     )
+    #     for item in range(1, 5):
+    #         self.logica.crear_accion(nombreManimiento, placaNuevoAuto, float(random.uniform((10000), 300000)), float(random.uniform((1000), 30000)),
+    #                                      self.data_factory.date_between(start_date='-2y'))
+    #     acciones = self.logica.dar_acciones_auto(1)
+    #     self.assertGreater(len(acciones), len([]), 'Consulta lista de acciones asociadas a un Automovil')                                   
         
-    def test_reporte_ganancias_automovil(self):
-        """Prueba para retornar el reporte de ganancias de un Automovil"""
-        # self.logica.eliminar_autos()
+    # def test_reporte_ganancias_automovil(self):
+    #     """Prueba para retornar el reporte de ganancias de un Automovil"""
+    #     # self.logica.eliminar_autos()
+    #     placaNuevoAuto = self.data_factory.name().upper()[0:3] + str(random.randint(100, 999))
+    #     self.logica.crear_auto(
+    #         self.data_factory.vehicle_make_model(),
+    #         placaNuevoAuto,
+    #         self.data_factory.vehicle_year(),
+    #         self.data_factory.random_number(digits=3),
+    #         self.data_factory.color_name(),
+    #         self.data_factory.random_number(digits=4),
+    #         self.data_factory.tipos_combustibles(),
+    #     )
+    #     # self.logica.eliminar_mantenimientos()
+    #     kilometrajeInicial = 1000
+    #     kilometrajeFinal = 0
+    #     kilometrajeActual = 0
+    #     intervaloKilometros = 100
+    #     for item in range(1, 4):
+    #         nombreManimiento = self.data_factory.tipos_mantenimientos() + str(random.randint(1, 10000))
+    #         self.logica.aniadir_mantenimiento(nombreManimiento, self.data_factory.sentence()) 
+    #         for itemManto in range(1, 5):
+    #             kilometrajeFinal = kilometrajeInicial + intervaloKilometros
+    #             kilometrajeActual = float(random.uniform(kilometrajeInicial, kilometrajeFinal))
+    #             self.logica.crear_accion(nombreManimiento, placaNuevoAuto, float(random.uniform((10000), 300000)), kilometrajeActual,
+    #                                      self.data_factory.date_between(start_date='-2y'))
+    #             kilometrajeInicial = kilometrajeActual
+    #     lista_gastos, valor_kilometro = self.logica.dar_reporte_ganancias(placaNuevoAuto)
+    #     self.assertGreater(len(lista_gastos), len([]), 'Consulta lista de gastos asociadas a un Automovil')
+    #     self.assertGreater(float(valor_kilometro) ,0.0,'valor km 0')        
+        
+    def test_editar_accion_mantenimiento_automovil_invalido(self):
+        """Prueba para validar que no se actualice una accion con un mantenimiento no existente"""
+        seCreaAccion = self.logica.crear_accion(random.randint(1000, 10000), 1, float(random.uniform(10000, 300000)), float(random.uniform(10000, 300000)),
+                                                self.data_factory.date_between(start_date='-4y'))
+        self.assertFalse(seCreaAccion, 'Validacion editar Accion con un mantenimiento no existe')        
+
+    def test_editar_accion_mantenimiento(self):
+        """Prueba para validar que se actualice una accion de mantenieminto"""
         placaNuevoAuto = self.data_factory.name().upper()[0:3] + str(random.randint(100, 999))
+        nombreManimiento = self.data_factory.tipos_mantenimientos() + str(random.randint(1, 10000))
+        self.logica.aniadir_mantenimiento(nombreManimiento, self.data_factory.sentence()) 
         self.logica.crear_auto(
             self.data_factory.vehicle_make_model(),
             placaNuevoAuto,
@@ -77,20 +131,6 @@ class AccionTestCase(unittest.TestCase):
             self.data_factory.random_number(digits=4),
             self.data_factory.tipos_combustibles(),
         )
-        # self.logica.eliminar_mantenimientos()
-        kilometrajeInicial = 1000
-        kilometrajeFinal = 0
-        kilometrajeActual = 0
-        intervaloKilometros = 100
-        for item in range(1, 4):
-            nombreManimiento = self.data_factory.tipos_mantenimientos() + str(random.randint(1, 10000))
-            self.logica.aniadir_mantenimiento(nombreManimiento, self.data_factory.sentence()) 
-            for itemManto in range(1, 5):
-                kilometrajeFinal = kilometrajeInicial + intervaloKilometros
-                kilometrajeActual = float(random.uniform(kilometrajeInicial, kilometrajeFinal))
-                self.logica.crear_accion(nombreManimiento, placaNuevoAuto, float(random.uniform((10000), 300000)), kilometrajeActual,
-                                         self.data_factory.date_between(start_date='-2y'))
-                kilometrajeInicial = kilometrajeActual
-        lista_gastos, valor_kilometro = self.logica.dar_reporte_ganancias(placaNuevoAuto)
-        self.assertGreater(len(lista_gastos), len([]), 'Consulta lista de gastos asociadas a un Automovil')
-        self.assertGreater(float(valor_kilometro) ,0.0,'valor km 0')        
+        seCreaAccion = self.logica.crear_accion(nombreManimiento, placaNuevoAuto, float(random.uniform(10000, 300000)), float(random.uniform(10000, 300000)),
+                                                self.data_factory.date_between(start_date='-4y'))
+        self.assertTrue(seCreaAccion, 'Se realiza la actualizacion de la accion de mantenieminto')         
