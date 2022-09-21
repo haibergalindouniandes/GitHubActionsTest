@@ -96,7 +96,7 @@ class AutomovilTestCase(unittest.TestCase):
 
     def test_automovil_consultar_automoviles(self):
         """Prueba para  consultar Automoviles Registrados"""
-        self.logica.eliminar_autos()
+        # self.logica.eliminar_autos()
         self.logica.crear_auto(
             self.data_factory.vehicle_make_model(),
             self.data_factory.name().upper()[0:3] + str(random.randint(100, 999)),
@@ -153,10 +153,11 @@ class AutomovilTestCase(unittest.TestCase):
 
     def test_vender_automovil(self):
         """Prueba para vender un Automovil"""
-        self.logica.eliminar_autos()
+        # self.logica.eliminar_autos()
+        placaAutoNuevo = self.data_factory.name().upper()[0:3] + str(random.randint(100, 999))
         self.logica.crear_auto(
             self.data_factory.vehicle_make_model(),
-            self.data_factory.name().upper()[0:3] + str(random.randint(100, 999)),
+            placaAutoNuevo,
             self.data_factory.vehicle_year(),
             self.data_factory.random_number(digits=4),
             self.data_factory.color_name(),
@@ -164,7 +165,7 @@ class AutomovilTestCase(unittest.TestCase):
             self.data_factory.tipos_combustibles(),
         )
         seVendioAutomovil = self.logica.vender_auto(
-            1,
+            placaAutoNuevo,
             self.data_factory.random_number(digits=5),
             self.data_factory.random_number(digits=6),
         )
@@ -172,7 +173,7 @@ class AutomovilTestCase(unittest.TestCase):
 
     def test_vender_automovil_tiene_acciones(self):
         """Prueba para validar que no se venda un Automovil que tenga acciones registradas"""
-        self.logica.eliminar_autos()
+        # self.logica.eliminar_autos()
         self.logica.crear_auto(
             self.data_factory.vehicle_make_model(),
             self.data_factory.name().upper()[0:3] + str(random.randint(100, 999)),
@@ -182,14 +183,14 @@ class AutomovilTestCase(unittest.TestCase):
             self.data_factory.random_number(digits=4),
             self.data_factory.tipos_combustibles(),
         )
-        self.logica.eliminar_mantenimientos()
+        # self.logica.eliminar_mantenimientos()
         self.logica.aniadir_mantenimiento(
             self.data_factory.tipos_mantenimientos(), self.data_factory.sentence()
         )
         self.logica.aniadir_mantenimiento(
             self.data_factory.tipos_mantenimientos(), self.data_factory.sentence()
         )
-        self.logica.eliminar_acciones()
+        # self.logica.eliminar_acciones()
         self.logica.crear_accion(
             1,
             1,

@@ -1,5 +1,6 @@
 # Import de librerias
 import unittest
+import random
 from faker import Faker
 from faker.providers import DynamicProvider
 from src.logica.Logica_mock import Logica_mock
@@ -27,13 +28,13 @@ class MantenimientoTestCase(unittest.TestCase):
     
     def test_agregar_mantenimiento(self):
         """Prueba para agregar un mantenimiento"""    
-        seCreoMantenimiento = self.logica.aniadir_mantenimiento(self.data_factory.tipos_mantenimientos(), self.data_factory.sentence())
+        seCreoMantenimiento = self.logica.aniadir_mantenimiento(self.data_factory.tipos_mantenimientos() + str(random.randint(1, 10000)), self.data_factory.sentence())
         self.assertTrue(seCreoMantenimiento)
 
     def test_agregar_mantenimiento_unico(self):
         """Prueba para agregar un mantenimiento que no este registrado (el nombre es el identificador y debe ser unico)"""        
-        self.logica.eliminar_mantenimientos()
-        nombreMantenimiento = self.data_factory.tipos_mantenimientos()
+        # self.logica.eliminar_mantenimientos()
+        nombreMantenimiento = self.data_factory.tipos_mantenimientos() + str(random.randint(1, 10000))
         self.logica.aniadir_mantenimiento(nombreMantenimiento, self.data_factory.sentence())
         seCreoMantenimiento = self.logica.aniadir_mantenimiento(nombreMantenimiento, self.data_factory.sentence())
         self.assertFalse(seCreoMantenimiento)
@@ -45,6 +46,6 @@ class MantenimientoTestCase(unittest.TestCase):
 
     def test_agregar_mantenimiento_nombre_mayuscula(self):
         """Prueba para validar que el parametro nombre se envie en mayuscula"""
-        self.logica.eliminar_mantenimientos()
+        # self.logica.eliminar_mantenimientos()
         seCreoMantenimiento = self.logica.aniadir_mantenimiento(self.data_factory.tipos_mantenimientos().lower(), self.data_factory.sentence())
         self.assertFalse(seCreoMantenimiento)		

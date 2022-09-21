@@ -249,9 +249,9 @@ class Logica_mock():
             else:
                 automovil = self.dar_auto(id_auto)
                 auto_id = str(automovil['id'])
-            accion = Accion(kilometraje, valor, self.utilitario.formatear_fecha(fecha), mantenimiento_id, auto_id)
+            accion = Accion(round(kilometraje, 2), round(valor, 2), self.utilitario.formatear_fecha(fecha), mantenimiento_id, auto_id)
             print('*** Accion de mantenimiento a crear ***')
-            print(str(kilometraje) + ", " + str(valor) + ", " + str(self.utilitario.formatear_fecha(fecha)) + ", " + str(mantenimiento_id) + ", " + str(auto_id))
+            print(self.utilitario.objeto_a_diccionario(accion))
             session.add(accion)
             session.commit()
             registroExitoso = True
@@ -302,7 +302,7 @@ class Logica_mock():
         automovil = self.dar_auto(id_auto)
         lista_gastos = []
         id_mantenimiento = 0
-        num_mantenimiento = 0
+        km_recorrido = 0
         total_gasto_mantenimiento = 0
         km_inicial = 0
         km_final = 0
@@ -331,7 +331,7 @@ class Logica_mock():
                 km_final = int(registro2['KM_FINAL'])
             
             
-            if km_final == km_inicial :
+            if km_final <= km_inicial :
                 km_recorrido = 1
             else:    
                 km_recorrido =  km_final - km_inicial
@@ -339,6 +339,10 @@ class Logica_mock():
             promedio_accion =  total_gasto_mantenimiento / km_recorrido
             promedio_total += int(promedio_accion)
             acciones_totales += 1
+            print("=> Km inicial: " + str(km_inicial))
+            print("=> Km final: " + str(km_final))
+            print("=> Km recorridos: " + str(km_recorrido))
+            print("=> Promedio accion: " + str(promedio_accion))
 
         if acciones_totales == 0 :
             promedio_final_auto =  promedio_total / 1
@@ -347,8 +351,9 @@ class Logica_mock():
 
 
         session.close()
-        print('***valores****')
-        print(str(promedio_final_auto))
+        print('*** Valores obtenidos en Reporte de Gancias ****')
+        print("=> Promedio final: " + str(promedio_final_auto))
+        print("=> Lista de gastos: ")
         print(lista_gastos)
 
         return lista_gastos, str(promedio_final_auto)

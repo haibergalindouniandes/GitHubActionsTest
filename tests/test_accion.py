@@ -38,10 +38,10 @@ class AccionTestCase(unittest.TestCase):
 
     def test_agregar_accion(self):
         """Prueba para agregar una accion"""
-        self.logica.eliminar_mantenimientos()
+        # self.logica.eliminar_mantenimientos()
         self.logica.aniadir_mantenimiento(
-            self.data_factory.tipos_mantenimientos(), self.data_factory.sentence())
-        self.logica.eliminar_autos()
+            self.data_factory.tipos_mantenimientos() + str(random.randint(1, 10000)), self.data_factory.sentence())
+        # self.logica.eliminar_autos()
         self.logica.crear_auto(self.data_factory.vehicle_make_model(), self.data_factory.name().upper()[0:3] + str(random.randint(100, 999)),
                                self.data_factory.vehicle_year(), self.data_factory.random_number(
                                    digits=4), self.data_factory.color_name(),
@@ -65,44 +65,32 @@ class AccionTestCase(unittest.TestCase):
         self.assertGreater(len(acciones), len([]), 'Consulta lista de acciones asociadas a un Automovil')                                   
         
     def test_reporte_ganancias_automovil(self):
-        """Prueba para validar que no existan mantenimientos asociados a un automovil"""
+        """Prueba para retornar el reporte de ganancias de un Automovil"""
         # self.logica.eliminar_autos()
+        placaNuevoAuto = self.data_factory.name().upper()[0:3] + str(random.randint(100, 999))
         self.logica.crear_auto(
-            "",
-            self.data_factory.name().upper()[0:3] + str(random.randint(100, 999)),
+            self.data_factory.vehicle_make_model(),
+            placaNuevoAuto,
             self.data_factory.vehicle_year(),
-            self.data_factory.random_number(digits=4),
+            self.data_factory.random_number(digits=3),
             self.data_factory.color_name(),
             self.data_factory.random_number(digits=4),
             self.data_factory.tipos_combustibles(),
         )
-        self.logica.crear_auto(
-            "",
-            self.data_factory.name().upper()[0:3] + str(random.randint(100, 999)),
-            self.data_factory.vehicle_year(),
-            self.data_factory.random_number(digits=4),
-            self.data_factory.color_name(),
-            self.data_factory.random_number(digits=4),
-            self.data_factory.tipos_combustibles(),
-        )
-
         # self.logica.eliminar_mantenimientos()
-        self.logica.aniadir_mantenimiento(
-            self.data_factory.tipos_mantenimientos() + str(random.randint(100, 10000)), self.data_factory.sentence())
-        self.logica.aniadir_mantenimiento(
-            self.data_factory.tipos_mantenimientos() + str(random.randint(100, 10000)), self.data_factory.sentence())
-        self.logica.aniadir_mantenimiento(
-            self.data_factory.tipos_mantenimientos() + str(random.randint(100, 10000)), self.data_factory.sentence())
-        self.logica.eliminar_acciones()
-        self.logica.crear_accion(1, 1, float(random.uniform(10000, 300000)), float(random.uniform(10000, 300000)),
-                                                self.data_factory.date_between(start_date='-4y'))
-        self.logica.crear_accion(1, 1, float(random.uniform(10000, 300000)), float(random.uniform(10000, 300000)),
-                                                self.data_factory.date_between(start_date='-4y'))
-        self.logica.crear_accion(1, 1, float(random.uniform(10000, 300000)), float(random.uniform(10000, 300000)),
-                                                self.data_factory.date_between(start_date='-4y'))
-        self.logica.crear_accion(1, 1, float(random.uniform(10000, 300000)), float(random.uniform(10000, 300000)),
-                                                self.data_factory.date_between(start_date='-4y'))
-        lista_gastos, valor_kilometro = self.logica.dar_reporte_ganancias(1)
-
+        kilometrajeInicial = 1000
+        kilometrajeFinal = 0
+        kilometrajeActual = 0
+        intervaloKilometros = 100
+        for item in range(1, 4):
+            nombreManimiento = self.data_factory.tipos_mantenimientos() + str(random.randint(1, 10000))
+            self.logica.aniadir_mantenimiento(nombreManimiento, self.data_factory.sentence()) 
+            for itemManto in range(1, 5):
+                kilometrajeFinal = kilometrajeInicial + intervaloKilometros
+                kilometrajeActual = float(random.uniform(kilometrajeInicial, kilometrajeFinal))
+                self.logica.crear_accion(nombreManimiento, placaNuevoAuto, float(random.uniform((10000), 300000)), kilometrajeActual,
+                                         self.data_factory.date_between(start_date='-2y'))
+                kilometrajeInicial = kilometrajeActual
+        lista_gastos, valor_kilometro = self.logica.dar_reporte_ganancias(placaNuevoAuto)
         self.assertGreater(len(lista_gastos), len([]), 'Consulta lista de gastos asociadas a un Automovil')
         self.assertGreater(float(valor_kilometro) ,0.0,'valor km 0')        
