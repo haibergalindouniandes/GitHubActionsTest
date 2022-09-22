@@ -21,17 +21,9 @@ jobs:
     steps:
       - name: Checkout de repositorio
         uses: actions/checkout@v2
-      - name: Print git commit data
-        run: |
-          echo "Get commit info"
-          echo " - ${{ github.event.head_commit.message }}
-          echo " - ${{ github.event.pull_request.body }}  
-          echo " - ${{ github.event.commits[0].message }}  
-          echo " - $(git log -1 --pretty=format:"%s")
-          echo "The title of PR is: ${{ github.event.pull_request.title }}"
-      - name: Obtener mensaje del commit
+      - name: Obtener mensaje del pull request
         id: obtener-mensaje-commit
-        run: echo "::set-output name=commit-msg::$(git log --format=%B -n 1 ${{github.event.after}})"  
+        run: echo "::set-output name=commit-msg::${{ github.event.pull_request.title }})"  
       - name: Configuracion de entorno de python
         uses: actions/setup-python@v2
         with:
