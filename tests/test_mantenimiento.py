@@ -50,16 +50,16 @@ class MantenimientoTestCase(unittest.TestCase):
         seCreoMantenimiento = self.logica.aniadir_mantenimiento(self.data_factory.tipos_mantenimientos().lower(), self.data_factory.sentence())
         self.assertFalse(seCreoMantenimiento)		
     
-    # def test_editar_mantenimiento_parametros_vacios(self):
-    #     """Prueba para validar que no se actualice un mantenimiento por parametros vacios"""
-    #     seEditoMantenimiento = self.logica.editar_mantenimiento(self.data_factory.tipos_mantenimientos() + str(random.randint(1, 10000)), "")
-    #     self.assertFalse(seEditoMantenimiento, 'No se actualiza el mantenimiento por parametros vacios')
+    def test_editar_mantenimiento_parametros_vacios(self):
+        """Prueba para validar que no se actualice un mantenimiento por parametros vacios"""
+        seEditoMantenimiento = self.logica.editar_mantenimiento(self.data_factory.tipos_mantenimientos() + str(random.randint(1, 10000)), "")
+        self.assertFalse(seEditoMantenimiento, 'No se actualiza el mantenimiento por parametros vacios')
 
-    # def test_editar_mantenimiento(self):
-    #     """Prueba para validar que se actualice un mantenimiento"""
-    #     # self.logica.eliminar_mantenimientos()
-    #     seEditoMantenimiento = self.logica.editar_mantenimiento(self.data_factory.tipos_mantenimientos() + str(random.randint(1, 10000)), self.data_factory.sentence())
-    #     self.assertFalse(seEditoMantenimiento, 'Se actualiza mantenimiento')		
+    def test_editar_mantenimiento(self):
+        """Prueba para validar que se actualice un mantenimiento"""
+        # self.logica.eliminar_mantenimientos()
+        seEditoMantenimiento = self.logica.editar_mantenimiento(self.data_factory.tipos_mantenimientos() + str(random.randint(1, 10000)), self.data_factory.sentence())
+        self.assertFalse(seEditoMantenimiento, 'Se actualiza mantenimiento')		
         
     # def test_consultar_lista_vacia_mantenimientos(self):
     #     """Prueba que retorna una lista vacia de mantenimientos"""
