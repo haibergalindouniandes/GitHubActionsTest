@@ -56,13 +56,21 @@ jobs:
           run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
         - name: Ejecución Pull Request Automatizado
           id: pull-request-automatizado
-          uses: peter-evans/create-pull-request@v3
+          # uses: peter-evans/create-pull-request@v3
+          # with:
+          #   branch: ${{ steps.obtener_rama.outputs.branch }}
+          #   base: develop
+          #   title: "Pull Request Automatizado [${{ github.event.head_commit.message }}]"
+          #   commit-message: "Pull Request Automatizado [${{ github.event.head_commit.message }}]"
+          #   body: "Se genera Pull Request Automatizado [${{ github.event.head_commit.message }}]"
+          #   token: ${{ secrets.GITHUB_TOKEN }}
+          #   labels: 'automated'         
+          #   delete-branch: true
+          uses: repo-sync/pull-request@v2
           with:
-            branch: ${{ steps.obtener_rama.outputs.branch }}
-            base: develop
-            title: "Pull Request Automatizado [${{ github.event.head_commit.message }}]"
-            commit-message: "Pull Request Automatizado [${{ github.event.head_commit.message }}]"
-            body: "Se genera Pull Request Automatizado [${{ github.event.head_commit.message }}]"
-            token: ${{ secrets.GITHUB_TOKEN }}
-            labels: 'automated'         
-            delete-branch: true
+          destination_branch: "develop"
+          pr_title: "Pulling ${{ github.ref }} into develop"
+          pr_body: "*An automated PR*"
+          pr_reviewer: ""
+          pr_draft: true
+          github_token: ${{ secrets.GITHUB_TOKEN }}
