@@ -56,13 +56,15 @@ jobs:
           run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
         - name: Ejecución Pull Request Automatizado
           id: pull-request-automatizado
-          uses: peter-evans/create-pull-request@v3
+          uses: repo-sync/pull-request@v2
           with:
-            branch: ${{ steps.obtener_rama.outputs.branch }}
-            base: develop
-            title: "Pull Request Automatizado [${{ github.event.head_commit.message }}]"
-            commit-message: "Pull Request Automatizado [${{ github.event.head_commit.message }}]"
-            body: "Se genera Pull Request Automatizado [${{ github.event.head_commit.message }}]"
-            token: ${{ secrets.GITHUB_TOKEN }}
-            labels: 'automated'         
-            delete-branch: false
+            destination_branch: "develop"
+            pr_title: "Pull Request Automatizado [${{ github.event.head_commit.message }}]"
+            pr_body: "Se genera Pull Request Automatizado [${{ github.event.head_commit.message }}]"
+            github_token: ${{ secrets.GITHUB_TOKEN }}
+        - name: Obtener url del pull request
+          run: echo ${{steps.pull-request-automatizado.outputs.pr_url}}
+        - name: output-number
+          run: echo ${{steps.pull-request-automatizado.pr_number}}
+        - name: output-has-changed-files
+          run: echo ${{steps.pull-request-automatizado.has_changed_files}}
