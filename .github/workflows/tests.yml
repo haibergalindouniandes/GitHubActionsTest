@@ -69,8 +69,6 @@ jobs:
           uses: repo-sync/pull-request@v2
           with:
             destination_branch: "develop"
-            pr_title: "Pulling ${{ github.ref }} into develop"
-            pr_body: "*An automated PR*"
-            pr_reviewer: ""
-            pr_draft: true
+            pr_title: "Pull Request Automatizado [${{ github.event.head_commit.message }}]"
+            pr_body: "Se genera Pull Request Automatizado [${{ github.event.head_commit.message }}]"
             github_token: ${{ secrets.GITHUB_TOKEN }}
