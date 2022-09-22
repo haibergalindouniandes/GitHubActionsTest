@@ -65,4 +65,4 @@ jobs:
             body: "Se genera Pull Request Automatizado [${{ github.event.head_commit.message }}]"
             token: ${{ secrets.GITHUB_TOKEN }}
             labels: 'automated'         
-            delete-branch: false
+            delete-branch: true
