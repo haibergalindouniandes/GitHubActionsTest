@@ -50,14 +50,19 @@ jobs:
       steps:
         - name: Checkout de repositorio
           uses: actions/checkout@v2
-        - name: Generar reporte
-          run: date +%s > report.txt  
+        - name: Obtener nombre de la rama
+          id: obtener_rama
+          shell: bash
+          run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
         - name: Ejecución Pull Request Automatizado
           id: pull-request-automatizado
           uses: peter-evans/create-pull-request@v3
           with:
-            token: ${{ secrets.GITHUB_TOKEN }}
-            commit-message: "Pull Request Automatizado [${{ github.event.head_commit.message }}]"
+            branch: ${{ steps.obtener_rama.outputs.branch }}
+            base: develop
             title: "Pull Request Automatizado [${{ github.event.head_commit.message }}]"
-            body: "Se geenra Pull Request Automatizado [${{ github.event.head_commit.message }}]"
-            labels: 'automated'          
+            commit-message: "Pull Request Automatizado [${{ github.event.head_commit.message }}]"
+            body: "Se genera Pull Request Automatizado [${{ github.event.head_commit.message }}]"
+            token: ${{ secrets.GITHUB_TOKEN }}
+            labels: 'automated'         
+            delete-branch: false
