@@ -56,7 +56,7 @@ jobs:
         env:
           GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
       - name: feedback
-        if: steps.merge-automatizado.outputs.mergeResult == "merged"
+        if: steps.merge-automatizado.outputs.mergeResult == 'merged'
         run: >
           echo "Pull request${{ steps.automerge.outputs.pullRequestNumber }}
           merged!"
