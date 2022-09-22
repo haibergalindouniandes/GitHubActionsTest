@@ -16,6 +16,8 @@ jobs:
   job_pruebas_automaticas:
     name: Ejecución Pruebas Automatizadas
     runs-on: windows-latest
+    outputs:
+      mensaje-commit: ${{ steps.obtener-mensaje-commit.outputs.commit-msg }}
     steps:
       - name: Checkout de repositorio
         uses: actions/checkout@v2
@@ -59,7 +61,7 @@ jobs:
         env:
           GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
           MERGE_LABELS: ''
-          MERGE_COMMIT_MESSAGE: "Merge automatico de ${{ jobs.job_pruebas_automaticas.steps.obtener-mensaje-commit.outputs.commit-msg }}"
+          MERGE_COMMIT_MESSAGE: "Merge automatico de ${{ needs.job_pruebas_automaticas.outputs.mensaje-commit }}"
       - name: Retroalimentación del Merge
         if: steps.merge-automatizado.outputs.mergeResult == 'merged'
         run: >
