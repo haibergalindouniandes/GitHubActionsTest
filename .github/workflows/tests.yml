@@ -76,6 +76,10 @@ jobs:
       needs: job_solicitud_pull_automatizado
       runs-on: ubuntu-latest
       steps:
+        - name: Checkout a la rama develop
+          uses: actions/checkout@v3
+          with:
+            path: 'develop'
         - name: Ejecución Merge Automatizado
           id: merge-automatizado
           uses: pascalgn/automerge-action@v0.15.3
