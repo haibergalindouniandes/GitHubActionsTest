@@ -23,7 +23,7 @@ jobs:
         uses: actions/checkout@v2
       - name: Obtener mensaje del commit
         id: obtener-mensaje-commit
-        run: echo "::set-output name=commit-msg::$(git log -1 --pretty=format:"%s")"  
+        run: echo "::set-output name=commit-msg::$(git log --format=%B -n 1 ${{github.event.after}})"  
       - name: Configuracion de entorno de python
         uses: actions/setup-python@v2
         with:
