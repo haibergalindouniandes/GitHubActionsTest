@@ -1,5 +1,5 @@
 name: Merge Automatico
-on:
+'on':
   pull_request:
     types:
       - labeled
@@ -10,7 +10,8 @@ on:
       - ready_for_review
       - reopened
       - unlocked
-    branches: [ develop ]
+    branches:
+      - develop
 jobs:
   job_pruebas_automaticas:
     name: Pruebas Automatizadas
@@ -30,20 +31,20 @@ jobs:
         id: correr-pruebas-automatizadas
         run: python -m unittest discover -s tests
       - name: Validar resultado con errores
-        if: ${{ failure() }}
+        if: '${{ failure() }}'
         env:
           MENSAJE_ERROR: Una o varias pruebas fallaron
-        run: echo "::set-output name=respuesta::${MENSAJE_ERROR}"
+        run: 'echo "::set-output name=respuesta::${MENSAJE_ERROR}"'
       - name: Validar resultado sin errores
-        if: ${{ success() }}
+        if: '${{ success() }}'
         env:
           MENSAJE_EXITO: Todas las pruebas fueron exitosas
-        run: echo "::set-output name=respuesta::${MENSAJE_EXITO}"
+        run: 'echo "::set-output name=respuesta::${MENSAJE_EXITO}"'
       - name: Cálculo de cubrimiento
         id: cubrimiento
         run: |
-            coverage run -m unittest discover -s tests
-            coverage report -m
+          coverage run -m unittest discover -s tests
+          coverage report -m
   automerge:
     name: Merge Automatico
     needs: job_pruebas_automaticas
@@ -51,10 +52,11 @@ jobs:
     steps:
       - id: merge-automatizado
         name: Merge Automatico
-        uses: "pascalgn/automerge-action@v0.15.3"
+        uses: pascalgn/automerge-action@v0.15.3
         env:
-          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
       - name: feedback
         if: steps.merge-automatizado.outputs.mergeResult == "merged"
-        run: |
-          echo "Pull request${{ steps.automerge.outputs.pullRequestNumber }} merged!"
+        run: >
+          echo "Pull request${{ steps.automerge.outputs.pullRequestNumber }}
+          merged!"
