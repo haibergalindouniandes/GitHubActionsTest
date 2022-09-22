@@ -50,8 +50,8 @@ jobs:
     needs: job_pruebas_automaticas
     runs-on: ubuntu-latest
     steps:
-      - id: merge-automatizado
-        name: Merge Automatico
+      - name: Merge Automatico
+        id: merge-automatizado
         uses: pascalgn/automerge-action@v0.15.3
         env:
           GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
