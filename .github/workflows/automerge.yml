@@ -16,14 +16,12 @@ jobs:
   job_pruebas_automaticas:
     name: Ejecución Pruebas Automatizadas
     runs-on: windows-latest
-    outputs:
-        mensaje-commit: ${{ steps.obtener-mensaje-commit.outputs.headCommitMsg }}
     steps:
       - name: Checkout de repositorio
         uses: actions/checkout@v2
       - name: Obtener mensaje del commit
         id: obtener-mensaje-commit
-        run: echo "::set-output name=headCommitMsg::$(git show -s --format=%s)"  
+        run: echo "::set-output name=commit-msg::$(git show -s --format=%s)"  
       - name: Configuracion de entorno de python
         uses: actions/setup-python@v2
         with:
@@ -61,7 +59,7 @@ jobs:
         env:
           GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
           MERGE_LABELS: ''
-          MERGE_COMMIT_MESSAGE: "Merge automatico de ${{ job_pruebas_automaticas.outputs.mensaje-commit }}"
+          MERGE_COMMIT_MESSAGE: "Merge automatico de ${{ jobs.job_pruebas_automaticas.steps.obtener-mensaje-commit.outputs.commit-msg }}"
       - name: Retroalimentación del Merge
         if: steps.merge-automatizado.outputs.mergeResult == 'merged'
         run: >
