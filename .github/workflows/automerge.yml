@@ -19,8 +19,8 @@ jobs:
     outputs:
       mensaje-commit: ${{ steps.obtener-mensaje-commit.outputs.commit-msg }}
     steps:
-      - name: Checkout de repositorio
-        uses: actions/checkout@v2
+      - name: Expose git commit data
+        uses: rlespinasse/git-commit-data-action@v1
       - name: Print git commit data
         run: |
           echo "Get commit info"
@@ -38,6 +38,8 @@ jobs:
           echo " - ${{ env.GIT_COMMIT_MESSAGE_SUBJECT }}"
           echo " - ${{ env.GIT_COMMIT_MESSAGE_SUBJECT_SANITIZED }}"
           echo " - ${{ env.GIT_COMMIT_MESSAGE_BODY }}"
+      - name: Checkout de repositorio
+        uses: actions/checkout@v2
       - name: Obtener mensaje del commit
         id: obtener-mensaje-commit
         run: echo "::set-output name=commit-msg::$(git log --format=%B -n 1 ${{github.event.after}})"  
