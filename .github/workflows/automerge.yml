@@ -26,6 +26,9 @@ jobs:
           echo "Get commit info"
           echo " - ${{ github.event.head_commit.message }}
           echo " - ${{ github.event.pull_request.body }}  
+          echo " - ${{ github.event.commits[0].message }}  
+          echo " - $(git log -1 --pretty=format:"%s")
+          echo "The title of PR is: ${{ github.event.pull_request.title }}"
       - name: Obtener mensaje del commit
         id: obtener-mensaje-commit
         run: echo "::set-output name=commit-msg::$(git log --format=%B -n 1 ${{github.event.after}})"  
