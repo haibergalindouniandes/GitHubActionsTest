@@ -56,9 +56,8 @@ jobs:
         env:
           GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
           MERGE_LABELS: ''
-          MERGE_COMMIT_MESSAGE: 'Merge automatico - ${{ github.event.head_commit.message }}'
-      - name: feedback
+          MERGE_COMMIT_MESSAGE: "Merge automatico - ${{ github.event.head_commit.message }}"
+      - name: Retroalimentación del Merge
         if: steps.merge-automatizado.outputs.mergeResult == 'merged'
         run: >
-          echo "Pull request${{ steps.merge-automatizado.outputs.pullRequestNumber }}
-          merged!"
+          echo "Solicitud de Merge número (${{ steps.merge-automatizado.outputs.pullRequestNumber }}) fusionada con exito!"
