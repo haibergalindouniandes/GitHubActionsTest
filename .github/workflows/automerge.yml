@@ -12,7 +12,7 @@ on:
       - unlocked
     branches: [ develop ]
 jobs:
-  job1:
+  job_pruebas_automaticas:
     name: Pruebas Automatizadas
     runs-on: windows-latest
     steps:
@@ -46,11 +46,14 @@ jobs:
             coverage report -m
   automerge:
     name: Automerge
-    needs: job1
+    needs: job_pruebas_automaticas
     runs-on: ubuntu-latest
     steps:
-      - name: Automerge
-        uses: "pascalgn/automerge-action@4536e8847eb62fe2f0ee52c8fa92d17aa97f932f"
-        env:
-          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-          MERGE_LABELS: "auto-merge-${{ github.ref }}"
+      - name: Merge Automatico
+        uses: plm9606/automerge_actions@1.2.2
+        with:
+          label-name: 'automerge'
+          merge-method: merge
+          auto-delete: false
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          
