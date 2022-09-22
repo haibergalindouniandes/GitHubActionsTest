@@ -1,4 +1,4 @@
-name: Merge Automatico
+name: Merge Automatizado
 'on':
   pull_request:
     types:
@@ -14,13 +14,16 @@ name: Merge Automatico
       - develop
 jobs:
   job_pruebas_automaticas:
-    env:
-      commitmsg: ${{ github.event.head_commit.message }}
-    name: Pruebas Automatizadas
+    name: Ejecución Pruebas Automatizadas
     runs-on: windows-latest
+    outputs:
+        mensaje-commit: ${{ steps.obtener-mensaje-commit.outputs.headCommitMsg }}
     steps:
       - name: Checkout de repositorio
         uses: actions/checkout@v2
+      - name: Obtener mensaje del commit
+        id: obtener-mensaje-commit
+        run: echo "::set-output name=headCommitMsg::$(git show -s --format=%s)"  
       - name: Configuracion de entorno de python
         uses: actions/setup-python@v2
         with:
@@ -47,18 +50,18 @@ jobs:
         run: |
           coverage run -m unittest discover -s tests
           coverage report -m
-  automerge:
-    name: Merge Automatico
+  job_automerge:
+    name: Merge Automatizado
     needs: job_pruebas_automaticas
     runs-on: ubuntu-latest
     steps:
-      - name: Merge Automatico
+      - name: Ejecución Merge Automatizado
         id: merge-automatizado
         uses: pascalgn/automerge-action@v0.15.3
         env:
           GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
           MERGE_LABELS: ''
-          MERGE_COMMIT_MESSAGE: "Merge automatico de (${{ env.commitmsg }})"
+          MERGE_COMMIT_MESSAGE: "Merge automatico de ${{ job_pruebas_automaticas.outputs.mensaje-commit }}"
       - name: Retroalimentación del Merge
         if: steps.merge-automatizado.outputs.mergeResult == 'merged'
         run: >
