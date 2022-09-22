@@ -19,27 +19,13 @@ jobs:
     outputs:
       mensaje-commit: ${{ steps.obtener-mensaje-commit.outputs.commit-msg }}
     steps:
-      - name: Expose git commit data
-        uses: rlespinasse/git-commit-data-action@v1
+      - name: Checkout de repositorio
+        uses: actions/checkout@v2
       - name: Print git commit data
         run: |
           echo "Get commit info"
-          echo " - ${{ github.event.head_commit.message }}"
-          echo " - ${{ env.GIT_COMMIT_SHORT_SHA }}"
-          echo "Get author info"
-          echo " - ${{ env.GIT_COMMIT_AUTHOR }}"
-          echo " - ${{ env.GIT_COMMIT_AUTHOR_NAME }}"
-          echo " - ${{ env.GIT_COMMIT_AUTHOR_EMAIL }}"
-          echo "Get committer info"
-          echo " - ${{ env.GIT_COMMIT_COMMITTER }}"
-          echo " - ${{ env.GIT_COMMIT_COMMITTER_NAME }}"
-          echo " - ${{ env.GIT_COMMIT_COMMITTER_EMAIL }}"
-          echo "Get message info"
-          echo " - ${{ env.GIT_COMMIT_MESSAGE_SUBJECT }}"
-          echo " - ${{ env.GIT_COMMIT_MESSAGE_SUBJECT_SANITIZED }}"
-          echo " - ${{ env.GIT_COMMIT_MESSAGE_BODY }}"
-      - name: Checkout de repositorio
-        uses: actions/checkout@v2
+          echo " - ${{ github.event.head_commit.message }}
+          echo " - ${{ github.event.pull_request.body }}  
       - name: Obtener mensaje del commit
         id: obtener-mensaje-commit
         run: echo "::set-output name=commit-msg::$(git log --format=%B -n 1 ${{github.event.after}})"  
