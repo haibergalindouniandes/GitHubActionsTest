@@ -1,8 +1,9 @@
 name: Pruebas unitarias
 on:
   push:
-    branches:
-      - '**_HU'
+    branches: ['**_HU', 'develop']
+  pull_request:
+    types: [ 'opened', 'labeled', 'unlabeled', 'synchronize', 'edited', 'ready_for_review', 'reopened', 'unlocked' ]
 jobs:
   job_pruebas_automaticas:
     name: Ejecución Pruebas Automatizadas
@@ -65,11 +66,22 @@ jobs:
             github_token: ${{ secrets.GITHUB_TOKEN }}
         - name: Obtener información del Pull Request
           run: |
-            echo "prNumber: ${{ steps.pull-request-automatizado.outputs.number }}"
             echo "prUrl: ${{ steps.pull-request-automatizado.outputs.pr_url }}"
-            echo "prTitle: ${{ steps.pull-request-automatizado.outputs.pr_title }}"
-            echo "prBody: ${{ steps.pull-request-automatizado.outputs.pr_body }}"
-            echo "prCreatedAt: ${{ steps.pull-request-automatizado.outputs.pr_created_at }}"
-            echo "prMergedAt: ${{ steps.pull-request-automatizado.outputs.pr_merged_at }}"
-            echo "prClosedAt: ${{ steps.pull-request-automatizado.outputs.pr_closed_at }}"
-            echo "prLabel: ${{ steps.pull-request-automatizado.outputs.pr_labels }}"
+
+  job_automerge:
+      if: ${{ contains(github.event.head_commit.message, '[Build_Merge]') }}
+      name: Ejecución Merge Automatizado
+      needs: job_solicitud_pull_automatizado
+      runs-on: ubuntu-latest
+      steps:
+        - name: Ejecución Merge Automatizado
+          id: merge-automatizado
+          uses: pascalgn/automerge-action@v0.15.3
+          env:
+            GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+            MERGE_LABELS: ''
+            MERGE_COMMIT_MESSAGE: "Merge automatico de ${{ needs.job_pruebas_automaticas.outputs.mensaje-commit }}"
+        - name: Retroalimentación del Merge
+          if: steps.merge-automatizado.outputs.mergeResult == 'merged'
+          run: >
+            echo "Solicitud de Merge número (${{ steps.merge-automatizado.outputs.pullRequestNumber }}) fusionada con exito!"
