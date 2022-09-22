@@ -14,12 +14,11 @@ name: Merge Automatico
       - develop
 jobs:
   job_pruebas_automaticas:
+    env:
+      commitmsg: ${{ github.event.head_commit.message }}
     name: Pruebas Automatizadas
     runs-on: windows-latest
     steps:
-      - name: Obtener nombre del ultimo commit
-        run: |
-          'echo "::set-output name=commitmsg::${{ github.event.head_commit.message }}"'
       - name: Checkout de repositorio
         uses: actions/checkout@v2
       - name: Configuracion de entorno de python
@@ -59,7 +58,7 @@ jobs:
         env:
           GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
           MERGE_LABELS: ''
-          MERGE_COMMIT_MESSAGE: "Merge automatico - ${{ github.event.head_commit.message }} - $commitmsg"
+          MERGE_COMMIT_MESSAGE: "Merge automatico de (${{ env.commitmsg }})"
       - name: Retroalimentación del Merge
         if: steps.merge-automatizado.outputs.mergeResult == 'merged'
         run: >
