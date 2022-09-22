@@ -15,7 +15,7 @@ jobs:
         uses: actions/checkout@v2
       - name: Obtener mensaje del pull request
         id: obtener-mensaje-commit
-        run: echo "::set-output name=commit-msg::[${{ github.event.pull_request.title }}]"  
+        run: echo "::set-output name=commit-msg:: - ${{ github.event.pull_request.title }}"  
       - name: Configuracion de entorno de python
         uses: actions/setup-python@v2
         with:
@@ -48,6 +48,8 @@ jobs:
       name: Ejecución Pull Request Automatizado
       needs: job_pruebas_automaticas
       runs-on: ubuntu-latest
+      outputs:
+        pull-request-url: ${{ steps.obtener-url-pull_request.outputs.apr-url }}
       steps:
         - name: Checkout de repositorio
           uses: actions/checkout@v2
@@ -64,11 +66,11 @@ jobs:
             pr_body: "Se genera Pull Request Automatizado: ${{ github.event.head_commit.message }}"
             pr_labels: '' 
             github_token: ${{ secrets.GITHUB_TOKEN }}
-        - name: Obtener información del Pull Request
-          run: |
-            echo "prUrl: ${{ steps.pull-request-automatizado.outputs.pr_url }}"
+        - name: Obtener URL del Pull Request
+          id: obtener-url-pull_request
+          run: echo "::set-output name=apr-url::${{ steps.pull-request-automatizado.outputs.pr_url }}"
 
-  job_automerge:
+  job_merge_automatizado:
       if: ${{ contains(github.event.head_commit.message, '[Build_Merge]') }}
       name: Ejecución Merge Automatizado
       needs: job_solicitud_pull_automatizado
@@ -80,7 +82,8 @@ jobs:
           env:
             GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
             MERGE_LABELS: ''
-            MERGE_COMMIT_MESSAGE: "Merge automatico de ${{ needs.job_pruebas_automaticas.outputs.mensaje-commit }}"
+            MERGE_COMMIT_MESSAGE: "Merge automatico de: ${{ needs.job_pruebas_automaticas.outputs.mensaje-commit }}"
+            PULL_REQUEST: ${{ needs.job_solicitud_pull_automatizado.outputs.pull-request-url }}
         - name: Retroalimentación del Merge
           if: steps.merge-automatizado.outputs.mergeResult == 'merged'
           run: >
