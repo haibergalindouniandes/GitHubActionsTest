@@ -59,12 +59,17 @@ jobs:
           uses: repo-sync/pull-request@v2
           with:
             destination_branch: "develop"
-            pr_title: "Pull Request Automatizado [${{ github.event.head_commit.message }}]"
-            pr_body: "Se genera Pull Request Automatizado [${{ github.event.head_commit.message }}]"
+            pr_title: "Pull Request Automatizado: ${{ github.event.head_commit.message }}"
+            pr_body: "Se genera Pull Request Automatizado: ${{ github.event.head_commit.message }}"
+            pr_labels: '' 
             github_token: ${{ secrets.GITHUB_TOKEN }}
-        - name: Obtener url del pull request
-          run: echo ${{steps.pull-request-automatizado.outputs.pr_url}}
-        - name: output-number
-          run: echo ${{steps.pull-request-automatizado.pr_number}}
-        - name: output-has-changed-files
-          run: echo ${{steps.pull-request-automatizado.has_changed_files}}
+        - name: Obtener información del Pull Request
+          run: |
+            echo "prNumber: ${{ steps.pull-request-automatizado.outputs.number }}"
+            echo "prUrl: ${{ steps.pull-request-automatizado.outputs.pr_url }}"
+            echo "prTitle: ${{ steps.pull-request-automatizado.outputs.pr_title }}"
+            echo "prBody: ${{ steps.pull-request-automatizado.outputs.pr_body }}"
+            echo "prCreatedAt: ${{ steps.pull-request-automatizado.outputs.pr_created_at }}"
+            echo "prMergedAt: ${{ steps.pull-request-automatizado.outputs.pr_merged_at }}"
+            echo "prClosedAt: ${{ steps.pull-request-automatizado.outputs.pr_closed_at }}"
+            echo "prLabel: ${{ steps.pull-request-automatizado.outputs.pr_labels }}"
