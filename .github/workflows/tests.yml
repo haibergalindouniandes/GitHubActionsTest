@@ -68,9 +68,9 @@ jobs:
           #   delete-branch: true
           uses: repo-sync/pull-request@v2
           with:
-          destination_branch: "develop"
-          pr_title: "Pulling ${{ github.ref }} into develop"
-          pr_body: "*An automated PR*"
-          pr_reviewer: ""
-          pr_draft: true
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+            destination_branch: "develop"
+            pr_title: "Pulling ${{ github.ref }} into develop"
+            pr_body: "*An automated PR*"
+            pr_reviewer: ""
+            pr_draft: true
+            github_token: ${{ secrets.GITHUB_TOKEN }}
