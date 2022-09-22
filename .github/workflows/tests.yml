@@ -87,7 +87,6 @@ jobs:
             GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
             MERGE_LABELS: ''
             MERGE_COMMIT_MESSAGE: "Merge automatico de: ${{ needs.job_pruebas_automaticas.outputs.mensaje-commit }}"
-            PULL_REQUEST: ${{ needs.job_solicitud_pull_automatizado.outputs.pull-request-url }}
         - name: Retroalimentación del Merge
           if: steps.merge-automatizado.outputs.mergeResult == 'merged'
           run: >
