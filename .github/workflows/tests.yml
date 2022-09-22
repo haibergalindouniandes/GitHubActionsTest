@@ -1,8 +1,9 @@
 name: Pruebas unitarias
 on:
   push:
-    branches:
-      - '**_HU'
+    branches: ['**_HU', 'develop']
+  pull_request:
+    types: [ 'opened', 'labeled', 'unlabeled', 'synchronize', 'edited', 'ready_for_review', 'reopened', 'unlocked' ]
 jobs:
   job_pruebas_automaticas:
     name: Ejecución Pruebas Automatizadas
@@ -56,13 +57,31 @@ jobs:
           run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
         - name: Ejecución Pull Request Automatizado
           id: pull-request-automatizado
-          uses: peter-evans/create-pull-request@v3
+          uses: repo-sync/pull-request@v2
           with:
-            branch: ${{ steps.obtener_rama.outputs.branch }}
-            base: develop
-            title: "Pull Request Automatizado [${{ github.event.head_commit.message }}]"
-            commit-message: "Pull Request Automatizado [${{ github.event.head_commit.message }}]"
-            body: "Se genera Pull Request Automatizado [${{ github.event.head_commit.message }}]"
-            token: ${{ secrets.GITHUB_TOKEN }}
-            labels: 'automated'         
-            delete-branch: false
+            destination_branch: "develop"
+            pr_title: "Pull Request Automatizado: ${{ github.event.head_commit.message }}"
+            pr_body: "Se genera Pull Request Automatizado: ${{ github.event.head_commit.message }}"
+            pr_labels: '' 
+            github_token: ${{ secrets.GITHUB_TOKEN }}
+        - name: Obtener información del Pull Request
+          run: |
+            echo "prUrl: ${{ steps.pull-request-automatizado.outputs.pr_url }}"
+
+  job_automerge:
+      if: ${{ contains(github.event.head_commit.message, '[Build_Merge]') }}
+      name: Ejecución Merge Automatizado
+      needs: job_solicitud_pull_automatizado
+      runs-on: ubuntu-latest
+      steps:
+        - name: Ejecución Merge Automatizado
+          id: merge-automatizado
+          uses: pascalgn/automerge-action@v0.15.3
+          env:
+            GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+            MERGE_LABELS: ''
+            MERGE_COMMIT_MESSAGE: "Merge automatico de ${{ needs.job_pruebas_automaticas.outputs.mensaje-commit }}"
+        - name: Retroalimentación del Merge
+          if: steps.merge-automatizado.outputs.mergeResult == 'merged'
+          run: >
+            echo "Solicitud de Merge número (${{ steps.merge-automatizado.outputs.pullRequestNumber }}) fusionada con exito!"

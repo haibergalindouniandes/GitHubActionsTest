@@ -61,10 +61,10 @@ class MantenimientoTestCase(unittest.TestCase):
         seEditoMantenimiento = self.logica.editar_mantenimiento(self.data_factory.tipos_mantenimientos() + str(random.randint(1, 10000)), self.data_factory.sentence())
         self.assertFalse(seEditoMantenimiento, 'Se actualiza mantenimiento')		
         
-    def test_consultar_lista_vacia_mantenimientos(self):
-        """Prueba que retorna una lista vacia de mantenimientos"""
-        self.logica.eliminar_mantenimientos()
-        self.assertEqual(self.logica.dar_mantenimientos(), [], 'Consultar lista vacia de mantenimientos')	
+    # def test_consultar_lista_vacia_mantenimientos(self):
+    #     """Prueba que retorna una lista vacia de mantenimientos"""
+    #     self.logica.eliminar_mantenimientos()
+    #     self.assertEqual(self.logica.dar_mantenimientos(), [], 'Consultar lista vacia de mantenimientos')	
 
     def test_consultar_mantenimientos(self):
         """Prueba consultar los mantenimientos que se encuentran registrados"""
