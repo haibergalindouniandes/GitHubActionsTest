@@ -63,7 +63,7 @@ jobs:
         run: |
           git config --local user.email "$(git log -n 1 --pretty=format:%an)"
           git config --local user.name "$(git log -n 1 --pretty=format:%ae)"
-          git fetch --unshallow
+          git pull
           git checkout develop
           git pull
           git merge --no-ff ${{ needs.job_pruebas_automaticas.outputs.rama-actual }} -m "Auto-merge generado back to dev"
