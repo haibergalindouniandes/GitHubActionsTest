@@ -49,7 +49,7 @@ jobs:
   job_auto_merge_release:
     if: ${{ contains(github.event.head_commit.message, '[Build_MR]') }}
     name: Ejecución Merge Automatizado
-    needs: job_creacion_rama_release
+    needs: job_pruebas_automaticas
     runs-on: ubuntu-latest
     steps:
       - name: Ejecución Merge Automatizado
