@@ -67,6 +67,8 @@ jobs:
     needs: job_automerge
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout de repositorio
+        uses: actions/checkout@v2
       - name: Crear Archivo con la fecha actual
         run: |
           date > time.txt
