@@ -15,7 +15,7 @@ jobs:
         uses: actions/checkout@v2
       - name: Obtener mensaje del pull request
         id: obtener-mensaje-commit
-        run: echo "::set-output name=commit-msg::${{ github.event.pull_request.title }}"  
+        run: echo "::set-output name=commit-msg::${{ github.event.head_commit.message }}"  
       - name: Configuracion de entorno de python
         uses: actions/setup-python@v2
         with:
@@ -44,7 +44,7 @@ jobs:
           coverage report -m
 
   job_solicitud_pull_automatizado:
-      if: ${{ contains(github.event.head_commit.message, '[Build_PullRequest]') }}
+      if: ${{ contains(github.event.head_commit.message, '[Build_PR]') }}
       name: Ejecución Pull Request Automatizado
       needs: job_pruebas_automaticas
       runs-on: ubuntu-latest
@@ -69,25 +69,3 @@ jobs:
         - name: Obtener URL del Pull Request
           id: obtener-url-pull_request
           run: echo "::set-output name=apr-url::${{ steps.pull-request-automatizado.outputs.pr_url }}"
-
-  job_merge_automatizado:
-      if: ${{ contains(github.event.head_commit.message, '[Build_Merge]') }}
-      name: Ejecución Merge Automatizado
-      needs: job_solicitud_pull_automatizado
-      runs-on: ubuntu-latest
-      steps:
-        - name: Checkout a la rama develop
-          uses: actions/checkout@v3
-          with:
-            path: 'develop'
-        - name: Ejecución Merge Automatizado
-          id: merge-automatizado
-          uses: pascalgn/automerge-action@v0.15.3
-          env:
-            GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
-            MERGE_LABELS: ''
-            MERGE_COMMIT_MESSAGE: "Merge automatico de: ${{ needs.job_pruebas_automaticas.outputs.mensaje-commit }}"
-        - name: Retroalimentación del Merge
-          if: steps.merge-automatizado.outputs.mergeResult == 'merged'
-          run: >
-            echo "Solicitud de Merge número (${{ steps.merge-automatizado.outputs.pullRequestNumber }}) fusionada con exito!"
