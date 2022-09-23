@@ -1,115 +1,87 @@
-name: Merge Main into PR
-
+name: Integración Develop
 on:
-  pull_request:
-    types: [labeled]
-
-env:
-  DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
-
+  push:
+    branches: ['**_HU']
 jobs:
-  main:
-    if: ${{ github.event.label.name == 'automated' }}
-    name: Merge Main
+  job_pruebas_automaticas:
+    name: Ejecución Pruebas Automatizadas
+    runs-on: windows-latest
+    outputs:
+      mensaje-commit: ${{ steps.obtener-mensaje-commit.outputs.commit-msg }}
+      rama-actual: ${{ steps.obtener-rama-actual.outputs.branch }}
+    steps:
+      - name: Checkout de repositorio
+        uses: actions/checkout@v2
+      - name: Obtener nombre de la rama
+        id: obtener-rama-actual
+        shell: bash
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"        
+      - name: Obtener mensaje del commit
+        id: obtener-mensaje-commit
+        run: echo "::set-output name=commit-msg::${{ github.event.head_commit.message }}"  
+      - name: Configuracion de entorno de python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.10'
+      - name: Instalacion de librerias y dependencias
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Correr pruebas automatizadas
+        id: correr-pruebas-automatizadas
+        run: python -m unittest discover -s tests
+      - name: Validar resultado con errores
+        if: '${{ failure() }}'
+        env:
+          MENSAJE_ERROR: Una o varias pruebas fallaron
+        run: 'echo "::set-output name=respuesta::${MENSAJE_ERROR}"'
+      - name: Validar resultado sin errores
+        if: '${{ success() }}'
+        env:
+          MENSAJE_EXITO: Todas las pruebas fueron exitosas
+        run: 'echo "::set-output name=respuesta::${MENSAJE_EXITO}"'
+      - name: Cálculo de cubrimiento
+        id: cubrimiento
+        run: |
+          coverage run -m unittest discover -s tests
+          coverage report -m
+
+  job_automerge:
+    if: ${{ contains(needs.job_pruebas_automaticas.outputs.mensaje-commit, '[Build_MR]') }}
+    name: Ejecución Merge Automatizado
+    needs: job_pruebas_automaticas
     runs-on: ubuntu-latest
     steps:
-      - name: git checkout
+      - name: Checkout de repositorio
         uses: actions/checkout@v2
         with:
-          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-          ref: ${{ github.event.pull_request.head.ref }}
-          fetch-depth: 0
-
-      - name: perform merge
+          token: ${{ secrets.GITHUB_TOKEN }}
+          ref: ${{ needs.job_pruebas_automaticas.outputs.rama-actual }}
+          fetch-depth: 0      
+      - name: Ejecución Merge Automatizado
+        id: merge-automatizado
         run: |
-          git config --global user.email "${GITHUB_ACTOR}"
-          git config --global user.name "${GITHUB_ACTOR}@users.noreply.github.com"
-          git status
+          git config --local user.email "$(git log -n 1 --pretty=format:%an)"
+          git config --local user.name "$(git log -n 1 --pretty=format:%ae)"
+          git fetch --unshallow
+          git checkout develop
           git pull
-          git checkout "$DEFAULT_BRANCH"
-          git status
-          git checkout "$GITHUB_HEAD_REF"
-          git merge "$DEFAULT_BRANCH" --no-edit
-          git push
-          git status
-
-      - name: remove label
-        if: always()
-        uses: actions-ecosystem/action-remove-labels@v1
-        with:
-          labels: merge main
-# name: Integración Develop
-# on:
-#   push:
-#     branches: ['**_HU']
-# jobs:
-#   job_pruebas_automaticas:
-#     name: Ejecución Pruebas Automatizadas
-#     runs-on: windows-latest
-#     outputs:
-#       mensaje-commit: ${{ steps.obtener-mensaje-commit.outputs.commit-msg }}
-#       rama-actual: ${{ steps.obtener-rama-actual.outputs.branch }}
-#     steps:
-#       - name: Checkout de repositorio
-#         uses: actions/checkout@v2
-#       - name: Obtener nombre de la rama
-#         id: obtener-rama-actual
-#         shell: bash
-#         run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"        
-#       - name: Obtener mensaje del commit
-#         id: obtener-mensaje-commit
-#         run: echo "::set-output name=commit-msg::${{ github.event.head_commit.message }}"  
-#       - name: Configuracion de entorno de python
-#         uses: actions/setup-python@v2
-#         with:
-#           python-version: '3.10'
-#       - name: Instalacion de librerias y dependencias
-#         run: |
-#           python -m pip install --upgrade pip
-#           pip install -r requirements.txt
-#       - name: Correr pruebas automatizadas
-#         id: correr-pruebas-automatizadas
-#         run: python -m unittest discover -s tests
-#       - name: Validar resultado con errores
-#         if: '${{ failure() }}'
-#         env:
-#           MENSAJE_ERROR: Una o varias pruebas fallaron
-#         run: 'echo "::set-output name=respuesta::${MENSAJE_ERROR}"'
-#       - name: Validar resultado sin errores
-#         if: '${{ success() }}'
-#         env:
-#           MENSAJE_EXITO: Todas las pruebas fueron exitosas
-#         run: 'echo "::set-output name=respuesta::${MENSAJE_EXITO}"'
-#       - name: Cálculo de cubrimiento
-#         id: cubrimiento
-#         run: |
-#           coverage run -m unittest discover -s tests
-#           coverage report -m
-
-#   job_automerge:
-#     if: ${{ contains(needs.job_pruebas_automaticas.outputs.mensaje-commit, '[Build_MR]') }}
-#     name: Ejecución Merge Automatizado
-#     needs: job_pruebas_automaticas
-#     runs-on: ubuntu-latest
-#     steps:
-#       - name: Checkout de repositorio
-#         uses: actions/checkout@v2      
-#       - name: Ejecución Merge Automatizado
-#         id: merge-automatizado
-#   # You may pin to the exact commit or the version.
-#   # uses: bambamboole/gha-upmerge@de87b212278009f9ace0ba024701890b9eb3281b
-#         uses: bambamboole/gha-upmerge@v1.0.1
-#         with:
-#           # Name of the branch to merge from
-#           from_branch: ${{ needs.job_pruebas_automaticas.outputs.rama-actual }}
-#           # Name of the branch to merge to
-#           to_branch: develop
-#           # User name for git commits
-#           user_name: 'BotSistema'
-#           # User email for git commits
-#           #user_email: # optional, default is actions@github.com
-#           # Environment variable containing the token to use for push
-#           push_token: GITHUB_TOKEN
+          git merge --no-ff ${{ needs.job_pruebas_automaticas.outputs.rama-actual }} -m "Auto-merge generado back to dev"
+          git push        
+  # You may pin to the exact commit or the version.
+  # uses: bambamboole/gha-upmerge@de87b212278009f9ace0ba024701890b9eb3281b
+        # uses: bambamboole/gha-upmerge@v1.0.1
+        # with:
+        #   # Name of the branch to merge from
+        #   from_branch: ${{ needs.job_pruebas_automaticas.outputs.rama-actual }}
+        #   # Name of the branch to merge to
+        #   to_branch: develop
+        #   # User name for git commits
+        #   user_name: 'BotSistema'
+        #   # User email for git commits
+        #   #user_email: # optional, default is actions@github.com
+        #   # Environment variable containing the token to use for push
+        #   push_token: GITHUB_TOKEN
         
       #   uses: bambamboole/gha-upmerge@v1.0.1
       #   env:
