@@ -6,7 +6,7 @@ jobs:
   job_solicitud_pull_automatizado:
       if: ${{ contains(github.event.head_commit.message, '[Build_PR]') }}
       name: Ejecución Pull Request Automatizado
-      needs: job_pruebas_automaticas
+      # needs: job_pruebas_automaticas
       runs-on: ubuntu-latest
       outputs:
         pull-request-url: ${{ steps.obtener-url-pull_request.outputs.apr-url }}
