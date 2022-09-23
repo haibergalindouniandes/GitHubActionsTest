@@ -1,7 +1,7 @@
-name: Integración Develop
+name: Integración Master
 on:
   push:
-    branches: ['develop']
+    branches: ['release']
 jobs:
   job_pruebas_automaticas:
     name: Ejecución Pruebas Automatizadas
@@ -46,16 +46,12 @@ jobs:
           coverage run -m unittest discover -s tests
           coverage report -m
 
-  job_automerge_release:
-    if: ${{ contains(needs.job_pruebas_automaticas.outputs.mensaje-commit, '[Merge automatico]') }}
+  job_auto_merge_release:
+    if: ${{ contains(github.event.head_commit.message, '[Build_MR]') }}
     name: Ejecución Merge Automatizado
     needs: job_pruebas_automaticas
     runs-on: ubuntu-latest
     steps:
-      - name: Creación Rama Release
-        id: creacion-release-automatizado
-        run: |
-          git checkout -b release 
       - name: Ejecución Merge Automatizado
         id: merge-automatizado
         uses: tukasz/direct-merge-action@master
@@ -64,4 +60,20 @@ jobs:
           owner: ${{ github.actor }}
           source-branch: develop
           target-branch: release
-          commit-message: "Merge automatico de: ${{ needs.job_pruebas_automaticas.outputs.mensaje-commit }}"
+          commit-message: "[Merge automatico] ${{ github.event.head_commit.message }}"
+
+  job_auto_merge_master:
+    if: ${{ contains(github.event.head_commit.message, '[Build_MR]') }}
+    name: Ejecución Merge Automatizado
+    needs: job_auto_merge_release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ejecución Merge Automatizado
+        id: merge-automatizado
+        uses: tukasz/direct-merge-action@master
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          owner: ${{ github.actor }}
+          source-branch: release
+          target-branch: master
+          commit-message: "[Merge automatico] ${{ github.event.head_commit.message }}"
