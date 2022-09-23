@@ -52,21 +52,32 @@ jobs:
     needs: job_pruebas_automaticas
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout de repositorio
-        uses: actions/checkout@v2
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          ref: ${{ needs.job_pruebas_automaticas.outputs.rama-actual }}
-          fetch-depth: 0      
       - name: Ejecución Merge Automatizado
         id: merge-automatizado
-        run: |
-          git config --local user.email "$(git log -n 1 --pretty=format:%an)"
-          git config --local user.name "$(git log -n 1 --pretty=format:%ae)"
-          git checkout develop
-          git pull
-          git merge --no-ff ${{ needs.job_pruebas_automaticas.outputs.rama-actual }} -m "Auto-merge generado back to dev"
-          git push        
+        uses: tukasz/direct-merge-action@master
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          owner: ${{ github.actor }}
+          source-branch: ${{ needs.job_pruebas_automaticas.outputs.rama-actual }}
+          target-branch: develop
+          commit-message: "Merge automatico de: ${{ needs.job_pruebas_automaticas.outputs.mensaje-commit }}"
+      - name: Obtener Resultado Merge
+          run: echo "::set-output name=apr-url::${{ steps.merge-automatizado.outputs }}"    
+      # - name: Checkout de repositorio
+      #   uses: actions/checkout@v2
+      #   with:
+      #     token: ${{ secrets.GITHUB_TOKEN }}
+      #     ref: ${{ needs.job_pruebas_automaticas.outputs.rama-actual }}
+      #     fetch-depth: 0      
+      # - name: Ejecución Merge Automatizado
+      #   id: merge-automatizado
+      #   run: |
+      #     git config --local user.email "$(git log -n 1 --pretty=format:%an)"
+      #     git config --local user.name "$(git log -n 1 --pretty=format:%ae)"
+      #     git checkout develop
+      #     git pull
+      #     git merge --no-ff ${{ needs.job_pruebas_automaticas.outputs.rama-actual }} -m "Auto-merge generado back to dev"
+      #     git push        
   # You may pin to the exact commit or the version.
   # uses: bambamboole/gha-upmerge@de87b212278009f9ace0ba024701890b9eb3281b
         # uses: bambamboole/gha-upmerge@v1.0.1
