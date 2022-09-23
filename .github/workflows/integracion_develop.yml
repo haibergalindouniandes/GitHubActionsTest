@@ -80,4 +80,4 @@ jobs:
           git pull
           git add time.txt
           git commit -m "[Merge automatico] ${{ needs.job_pruebas_automaticas.outputs.mensaje-commit }}"
-          git push origen
+          git push origin
