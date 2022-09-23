@@ -1,18 +1,22 @@
-name: Merge Automatizado
-'on':
-  pull_request:
-    types: [ opened, labeled, unlabeled, synchronize, edited, ready_for_review, reopened ]
-    branches: [develop]
+name: Integración Develop
+on:
+  push:
+    branches: ['**_HU']
 jobs:
   job_pruebas_automaticas:
     name: Ejecución Pruebas Automatizadas
     runs-on: windows-latest
     outputs:
       mensaje-commit: ${{ steps.obtener-mensaje-commit.outputs.commit-msg }}
+      rama-actual: ${{ steps.obtener-rama-actual.outputs.branch }}
     steps:
       - name: Checkout de repositorio
         uses: actions/checkout@v2
-      - name: Obtener mensaje del pull request
+      - name: Obtener nombre de la rama
+        id: obtener-rama-actual
+        shell: bash
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"        
+      - name: Obtener mensaje del commit
         id: obtener-mensaje-commit
         run: echo "::set-output name=commit-msg::${{ github.event.head_commit.message }}"  
       - name: Configuracion de entorno de python
@@ -40,21 +44,40 @@ jobs:
         id: cubrimiento
         run: |
           coverage run -m unittest discover -s tests
-          coverage report -m  
+          coverage report -m
+
   job_automerge:
-    if: ${{ (github.event.label.name == 'automated') || contains(github.event.pull_request.title, '[Build_MR]') }}
+    if: ${{ contains(needs.job_pruebas_automaticas.outputs.mensaje-commit, '[Build_MR]') }}
     name: Ejecución Merge Automatizado
     needs: job_pruebas_automaticas
     runs-on: ubuntu-latest
     steps:
       - name: Ejecución Merge Automatizado
         id: merge-automatizado
-        uses: pascalgn/automerge-action@v0.15.3
-        env:
-          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
-          MERGE_LABELS: ''
-          MERGE_COMMIT_MESSAGE: "Merge automatico de: ${{ github.event.pull_request.title }}"
-      - name: Retroalimentación del Merge
-        if: steps.merge-automatizado.outputs.mergeResult == 'merged'
-        run: >
-          echo "Solicitud de Merge número (${{ steps.merge-automatizado.outputs.pullRequestNumber }}) fusionada con exito!"
+        uses: tukasz/direct-merge-action@master
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          owner: ${{ github.actor }}
+          source-branch: ${{ needs.job_pruebas_automaticas.outputs.rama-actual }}
+          target-branch: develop
+          commit-message: "[Merge automatico] ${{ needs.job_pruebas_automaticas.outputs.mensaje-commit }}"
+
+  job_auto_push:
+    name: Ejecución Push Automatizado
+    needs: job_automerge
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout de repositorio
+        uses: actions/checkout@v2
+      - name: Crear Archivo con la fecha actual
+        run: |
+          date > time.txt
+      - name: Configuración git
+        run: |
+          git config user.name "$(git log -n 1 --pretty=format:%an)"
+          git config user.email "$(git log -n 1 --pretty=format:%ae)"
+      - name: Ejecución Push Automatizado
+        run: |
+          git add time.txt
+          git commit -m "new date commit"
+          git push origin develop
