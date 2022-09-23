@@ -73,11 +73,7 @@ jobs:
         run: |
           git config user.name "$(git log -n 1 --pretty=format:%an)"
           git config user.email "$(git log -n 1 --pretty=format:%ae)"        
-      - name: Ejecución Push Automatizado 
+      - name: Creación De Rama Release Automatizada 
         run: |
-          git checkout develop 
-          date > time.txt
-          git pull
-          git add time.txt
-          git commit -m "[Merge automatico] ${{ needs.job_pruebas_automaticas.outputs.mensaje-commit }}"
-          git push origin
+          git checkout -b release
+          git push -f -u origin release
