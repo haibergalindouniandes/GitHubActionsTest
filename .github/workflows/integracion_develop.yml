@@ -72,8 +72,8 @@ jobs:
           date > time.txt
       - name: Configuración git
         run: |
-          git config --local user.email "${GITHUB_ACTOR}"
-          git config --local user.name "${GITHUB_ACTOR}@users.noreply.github.com"
+          git config user.name "$(git log -n 1 --pretty=format:%an)"
+          git config user.email "$(git log -n 1 --pretty=format:%ae)"
       - name: Ejecución Push Automatizado
         run: |
           git add time.txt
