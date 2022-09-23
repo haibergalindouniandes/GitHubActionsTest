@@ -69,7 +69,7 @@ jobs:
           # User email for git commits
           #user_email: # optional, default is actions@github.com
           # Environment variable containing the token to use for push
-          push_token: '${{ secrets.GITHUB_TOKEN }}'
+          push_token: GITHUB_TOKEN
         
       #   uses: bambamboole/gha-upmerge@v1.0.1
       #   env:
