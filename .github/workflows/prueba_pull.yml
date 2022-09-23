@@ -1,0 +1,31 @@
+name: Pruebas unitarias
+on:
+  push:
+    branches: ['**_HU']
+jobs:
+  job_solicitud_pull_automatizado:
+      if: ${{ contains(github.event.head_commit.message, '[Build_PR]') }}
+      name: Ejecución Pull Request Automatizado
+      needs: job_pruebas_automaticas
+      runs-on: ubuntu-latest
+      outputs:
+        pull-request-url: ${{ steps.obtener-url-pull_request.outputs.apr-url }}
+      steps:
+        - name: Checkout de repositorio
+          uses: actions/checkout@v2
+        - name: Obtener nombre de la rama
+          id: obtener_rama
+          shell: bash
+          run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        - name: Ejecución Pull Request Automatizado
+          id: pull-request-automatizado
+          uses: repo-sync/pull-request@v2
+          with:
+            destination_branch: "develop"
+            pr_title: "Pull Request Automatizado: ${{ github.event.head_commit.message }}"
+            pr_body: "Se genera Pull Request Automatizado: ${{ github.event.head_commit.message }}"
+            pr_label: 'automated' 
+            github_token: ${{ secrets.GITHUB_TOKEN }}
+        - name: Obtener URL del Pull Request
+          id: obtener-url-pull_request
+          run: echo "::set-output name=apr-url::${{ steps.pull-request-automatizado.outputs.pr_url }}"
