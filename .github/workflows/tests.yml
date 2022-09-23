@@ -64,7 +64,7 @@ jobs:
             destination_branch: "develop"
             pr_title: "Pull Request Automatizado: ${{ github.event.head_commit.message }}"
             pr_body: "Se genera Pull Request Automatizado: ${{ github.event.head_commit.message }}"
-            pr_labels: 'automated' 
+            pr_label: 'automated' 
             github_token: ${{ secrets.GITHUB_TOKEN }}
         - name: Obtener URL del Pull Request
           id: obtener-url-pull_request
