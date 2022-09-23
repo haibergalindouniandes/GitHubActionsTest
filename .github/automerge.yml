@@ -5,8 +5,7 @@ name: Merge Automatizado
     branches: [develop]
 jobs:
   job_automerge:
-    if: ${{ (github.event.label.name == 'bot') && contains(github.event.pull_request.title, '[Build_MR]') }}
-    ${{  }} 
+    if: ${{ (github.event.label.name == 'automated') || contains(github.event.pull_request.title, '[Build_MR]') }}
     name: Ejecución Merge Automatizado
     needs: job_pruebas_automaticas
     runs-on: ubuntu-latest
