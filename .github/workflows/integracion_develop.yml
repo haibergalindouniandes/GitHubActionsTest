@@ -61,3 +61,21 @@ jobs:
           source-branch: ${{ needs.job_pruebas_automaticas.outputs.rama-actual }}
           target-branch: develop
           commit-message: "[Merge automatico] ${{ needs.job_pruebas_automaticas.outputs.mensaje-commit }}"
+
+  job_auto_push:
+    name: Ejecución Push Automatizado
+    needs: job_automerge
+    runs-on: ubuntu-latest
+    steps:
+      - name: Crear Archivo con la fecha actual
+        run: |
+          date > time.txt
+      - name: Configuración git
+        run: |
+          git config user.name "GitHub Actions Bot"
+          git config user.email "<>""
+      - name: Ejecución Push Automatizado
+        run: |
+          git add time.txt
+          git commit -m "new date commit"
+          git push origin develop
