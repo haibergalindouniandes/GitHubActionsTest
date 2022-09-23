@@ -1,7 +1,7 @@
 name: Merge Automatizado
 'on':
   pull_request:
-    types: [ labeled ]
+    types: [ opened, labeled, unlabeled, synchronize, edited, ready_for_review, reopened ]
     branches: [develop]
 jobs:
   job_automerge:
