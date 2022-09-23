@@ -47,7 +47,8 @@ jobs:
           coverage report -m
 
   job_auto_merge_develop:
-    if: ${{ contains(needs.job_pruebas_automaticas.outputs.mensaje-commit, '[Build_MR]') }}
+    # if: ${{ contains(needs.job_pruebas_automaticas.outputs.mensaje-commit, '[Build_MR]') }}
+    if: ${{ contains(github.event.head_commit.message, '[Build_MR]') }}
     name: Ejecución Merge Automatizado
     needs: job_pruebas_automaticas
     runs-on: ubuntu-latest
@@ -60,10 +61,12 @@ jobs:
           owner: ${{ github.actor }}
           source-branch: ${{ needs.job_pruebas_automaticas.outputs.rama-actual }}
           target-branch: develop
-          commit-message: "[Merge automatico] ${{ needs.job_pruebas_automaticas.outputs.mensaje-commit }}"
+          commit-message: "[Merge automatico] ${{ github.event.head_commit.message }}"
+          # commit-message: "[Merge automatico] ${{ needs.job_pruebas_automaticas.outputs.mensaje-commit }}"
 
   job_creacion_rama_release:
-    if: ${{ contains(needs.job_pruebas_automaticas.outputs.mensaje-commit, '[Build_MR]') }}    
+    # if: ${{ contains(needs.job_pruebas_automaticas.outputs.mensaje-commit, '[Build_MR]') }}
+    if: ${{ contains(github.event.head_commit.message, '[Build_MR]') }}
     name: Ejecución Push Automatizado
     needs: job_auto_merge_develop
     runs-on: ubuntu-latest
@@ -80,7 +83,8 @@ jobs:
           git push -f -u origin release
 
   job_auto_merge_release:
-    if: ${{ contains(needs.job_pruebas_automaticas.outputs.mensaje-commit, '[Build_MR]') }}
+    # if: ${{ contains(needs.job_pruebas_automaticas.outputs.mensaje-commit, '[Build_MR]') }}
+    if: ${{ contains(github.event.head_commit.message, '[Build_MR]') }}
     name: Ejecución Merge Automatizado
     needs: job_creacion_rama_release
     runs-on: ubuntu-latest
@@ -93,12 +97,14 @@ jobs:
           owner: ${{ github.actor }}
           source-branch: develop
           target-branch: release
-          commit-message: "[Merge automatico] ${{ needs.job_pruebas_automaticas.outputs.mensaje-commit }}"
+          commit-message: "[Merge automatico] ${{ github.event.head_commit.message }}"
+          # commit-message: "[Merge automatico] ${{ needs.job_pruebas_automaticas.outputs.mensaje-commit }}"
 
   job_auto_merge_master:
-    if: ${{ contains(needs.job_pruebas_automaticas.outputs.mensaje-commit, '[Build_MR]') }}
+    # if: ${{ contains(needs.job_pruebas_automaticas.outputs.mensaje-commit, '[Build_MR]') }}
+    if: ${{ contains(github.event.head_commit.message, '[Build_MR]') }}
     name: Ejecución Merge Automatizado
-    needs: job_creacion_rama_release
+    needs: job_auto_merge_release
     runs-on: ubuntu-latest
     steps:
       - name: Ejecución Merge Automatizado
@@ -109,4 +115,5 @@ jobs:
           owner: ${{ github.actor }}
           source-branch: release
           target-branch: master
-          commit-message: "[Merge automatico] ${{ needs.job_pruebas_automaticas.outputs.mensaje-commit }}"          
+          commit-message: "[Merge automatico] ${{ github.event.head_commit.message }}"
+          # commit-message: "[Merge automatico] ${{ needs.job_pruebas_automaticas.outputs.mensaje-commit }}"          
