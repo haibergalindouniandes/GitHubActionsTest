@@ -2,7 +2,7 @@ name: Merge Automatizado
 on:
   pull_request:
     types: [ opened, labeled, unlabeled, synchronize, edited, ready_for_review, reopened ]
-    branches: ['**_HU']
+    branches: develop
 jobs:
   job_pruebas_automaticas:
     name: Ejecución Pruebas Automatizadas
