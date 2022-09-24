@@ -1,7 +1,7 @@
 name: Close Pull Request
 on:
   pull_request:
-    types: [ merged, closed, labeled ]
+    types: [ opened, merged, closed, labeled ]
 
 jobs:
   merge_job:
