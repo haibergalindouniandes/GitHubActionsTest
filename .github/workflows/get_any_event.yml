@@ -36,4 +36,4 @@ jobs:
         run: |
           echo "${{ github.event_name }}"
           echo "${{ github.event.action }}"
-          echo "${{ github.event.inputs.input }}""
+          echo "${{ github.event.inputs.input }}"
