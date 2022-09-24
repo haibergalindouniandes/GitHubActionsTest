@@ -99,13 +99,10 @@ jobs:
     steps:
       - name: Ejecución Merge Automatizado
         id: merge-automatizado
-        uses: pascalgn/automerge-action@v0.15.3
-        env:
-          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
-          MERGE_LABELS: ''
-          MERGE_COMMIT_MESSAGE: "[Merge automatico] ${{ github.event.pull_request.title }}"
-          MERGE_DELETE_BRANCH: true 
-      - name: Retroalimentación Del Merge Hacia Main
-        if: steps.merge-automatizado.outputs.mergeResult == 'merged'
-        run: >
-          echo "Solicitud de Merge número (${{ steps.merge-automatizado.outputs.pullRequestNumber }}) fusionada con exito!"
+        uses: tukasz/direct-merge-action@master
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          owner: ${{ github.actor }}
+          source-branch: master
+          target-branch: main
+          commit-message: "[Merge automatico] ${{ github.event.pull_request.title }}"
