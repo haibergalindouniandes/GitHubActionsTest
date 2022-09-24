@@ -34,4 +34,6 @@ jobs:
     steps:
       - name: Print GitHub event action
         run: |
+          echo "${{ github.event_name }}"
           echo "${{ github.event.action }}"
+          echo "${{ github.event.inputs.input }}""
