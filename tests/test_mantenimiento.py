@@ -44,11 +44,11 @@ class MantenimientoTestCase(unittest.TestCase):
         seCreoMantenimiento = self.logica.aniadir_mantenimiento("", self.data_factory.sentence())
         self.assertFalse(seCreoMantenimiento)
 
-    def test_agregar_mantenimiento_nombre_mayuscula(self):
-        """Prueba para validar que el parametro nombre se envie en mayuscula"""
-        # self.logica.eliminar_mantenimientos()
-        seCreoMantenimiento = self.logica.aniadir_mantenimiento(self.data_factory.tipos_mantenimientos().lower(), self.data_factory.sentence())
-        self.assertFalse(seCreoMantenimiento)		
+    # def test_agregar_mantenimiento_nombre_mayuscula(self):
+    #     """Prueba para validar que el parametro nombre se envie en mayuscula"""
+    #     # self.logica.eliminar_mantenimientos()
+    #     seCreoMantenimiento = self.logica.aniadir_mantenimiento(self.data_factory.tipos_mantenimientos().lower(), self.data_factory.sentence())
+    #     self.assertFalse(seCreoMantenimiento)		
     
     def test_editar_mantenimiento_parametros_vacios(self):
         """Prueba para validar que no se actualice un mantenimiento por parametros vacios"""
