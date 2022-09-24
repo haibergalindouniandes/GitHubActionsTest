@@ -1,7 +1,7 @@
 name: Pruebas unitarias
 on:
   push:
-    branches: ['**_HU', 'develop']
+    branches: ['**_HU']
 jobs:
   job_pruebas_automaticas:
     name: Ejecución Pruebas Automatizadas
